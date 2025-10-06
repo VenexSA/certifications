@@ -1,12 +1,14 @@
 // js/admin.js
+
+// Inicializar Supabase (UMD global)
 const SUPABASE_URL = "https://guhycosuznmmmupsztqn.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1aHljb3N1em5tbW11cHN6dHFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2MTk4NzAsImV4cCI6MjA3NTE5NTg3MH0.aRqaIr5UkW6V62iv92_VV-SnYv8dCHj7v8KNxTCG-Rc"; // Key pública de Supabase Auth
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1aHljb3N1em5tbW11cHN6dHFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2MTk4NzAsImV4cCI6MjA3NTE5NTg3MH0.aRqaIr5UkW6V62iv92_VV-SnYv8dCHj7v8KNxTCG-Rc"; // solo la key pública de usuario
+const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Crear cliente Supabase
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+// Elementos del DOM
 const adminSection = document.getElementById("adminSection");
 const authSection = document.getElementById("authSection");
+const loginBtn = document.getElementById("loginBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 const certificateForm = document.getElementById("certificateForm");
 const adminTableBody = document.getElementById("adminTableBody");
@@ -15,24 +17,26 @@ const certIdInput = document.getElementById("certId");
 const pdfFileInput = document.getElementById("pdfFile");
 const pdfUrlInput = document.getElementById("pdf_url");
 
-// ------------------- LOGIN / LOGOUT -------------------
-document.getElementById("loginBtn").addEventListener("click", async () => {
+// LOGIN CON GOOGLE
+loginBtn.addEventListener("click", async () => {
   await supabase.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: "https://certifications.venex.com.ar/admin.html" }
+    options: {
+      redirectTo: "https://certifications.venex.com.ar/admin.html"
+    }
   });
 });
 
+// CERRAR SESIÓN
 logoutBtn.addEventListener("click", async () => {
   await supabase.auth.signOut();
   window.location.reload();
 });
 
-// ------------------- CHECK SESSION -------------------
+// VERIFICAR SESIÓN Y RENDERIZAR TABLA
 async function checkSession() {
   const { data } = await supabase.auth.getSession();
   if (data.session) {
-    // Usuario logueado
     adminSection.classList.remove("hidden");
     authSection.classList.add("hidden");
     renderAdminTable(data.session.access_token);
@@ -41,9 +45,8 @@ async function checkSession() {
     authSection.classList.remove("hidden");
   }
 }
-checkSession();
 
-// ------------------- TABLA -------------------
+// CARGAR CERTIFICADOS DESDE BACKEND
 async function renderAdminTable(token) {
   const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/getCertificates", {
     headers: { "Authorization": `Bearer ${token}` }
@@ -67,7 +70,7 @@ async function renderAdminTable(token) {
     adminTableBody.appendChild(tr);
   });
 
-  // Listeners botones
+  // Editar y eliminar
   adminTableBody.querySelectorAll(".editBtn").forEach(btn => {
     btn.addEventListener("click", () => editCertificate(btn.dataset.id, token));
   });
@@ -76,7 +79,7 @@ async function renderAdminTable(token) {
   });
 }
 
-// ------------------- EDITAR / CANCELAR -------------------
+// EDITAR CERTIFICADO
 async function editCertificate(id, token) {
   const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/getCertificates", {
     headers: { "Authorization": `Bearer ${token}` }
@@ -88,18 +91,47 @@ async function editCertificate(id, token) {
   document.getElementById("marca").value = cert.marca;
   document.getElementById("modelo").value = cert.modelo;
   document.getElementById("certificado").value = cert.certificado;
-  pdfUrlInput.value = cert.pdf_url;
+  document.getElementById("pdf_url").value = cert.pdf_url;
 }
 
+// CANCELAR EDICIÓN
 cancelEditBtn.addEventListener("click", () => {
   certIdInput.value = "";
   certificateForm.reset();
 });
 
-// ------------------- GUARDAR -------------------
+// SUBIR PDF A SUPABASE STORAGE
+async function uploadPdf(file) {
+  if (!file) return null;
+  const fileName = `${Date.now()}-${file.name}`;
+  const { data, error } = await supabase.storage
+    .from("pdfs")
+    .upload(fileName, file, { cacheControl: "3600", upsert: true });
+  if (error) {
+    alert("Error subiendo el PDF: " + error.message);
+    return null;
+  }
+  const { publicUrl, error: urlError } = supabase.storage
+    .from("pdfs")
+    .getPublicUrl(fileName);
+  if (urlError) {
+    alert("Error obteniendo URL: " + urlError.message);
+    return null;
+  }
+  return publicUrl;
+}
+
+pdfFileInput.addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const url = await uploadPdf(file);
+  if (url) pdfUrlInput.value = url;
+});
+
+// GUARDAR CERTIFICADO (CREATE/UPDATE)
 certificateForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const token = supabase.auth.session()?.access_token;
+  const token = supabase.auth.session()?.access_token || null;
   if (!token) return alert("No autorizado");
 
   const certData = {
@@ -114,6 +146,7 @@ certificateForm.addEventListener("submit", async (e) => {
   const url = id
     ? `https://certifications-backend-jnnv.onrender.com/api/updateCertificate/${id}`
     : `https://certifications-backend-jnnv.onrender.com/api/createCertificate`;
+
   const method = id ? "PUT" : "POST";
 
   await fetch(url, {
@@ -127,7 +160,7 @@ certificateForm.addEventListener("submit", async (e) => {
   renderAdminTable(token);
 });
 
-// ------------------- ELIMINAR -------------------
+// ELIMINAR CERTIFICADO
 async function deleteCertificate(id, token) {
   if (!confirm("¿Estás seguro de eliminar este certificado?")) return;
   await fetch(`https://certifications-backend-jnnv.onrender.com/api/deleteCertificate/${id}`, {
@@ -137,19 +170,5 @@ async function deleteCertificate(id, token) {
   renderAdminTable(token);
 }
 
-// ------------------- SUBIDA DE PDF -------------------
-async function uploadPdf(file) {
-  if (!file) return null;
-  const fileName = `${Date.now()}-${file.name}`;
-  const { data, error } = await supabase.storage.from("pdfs").upload(fileName, file, { cacheControl: "3600", upsert: true });
-  if (error) return alert("Error subiendo PDF: " + error.message), null;
-  const { publicUrl } = supabase.storage.from("pdfs").getPublicUrl(fileName);
-  return publicUrl;
-}
-
-pdfFileInput.addEventListener("change", async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const url = await uploadPdf(file);
-  if (url) pdfUrlInput.value = url;
-});
+// INICIAR
+checkSession();
