@@ -24,19 +24,6 @@
   <section id="adminSection" class="hidden">
     <button id="logoutBtn">Cerrar sesión</button>
 
-    <h2>Agregar / Editar Certificado</h2>
-    <form id="certificateForm">
-      <input type="hidden" id="certId">
-      <input type="text" id="producto" placeholder="Producto" required>
-      <input type="text" id="marca" placeholder="Marca" required>
-      <input type="text" id="modelo" placeholder="Modelo" required>
-      <input type="text" id="certificado" placeholder="Certificado" required>
-      <input type="file" id="pdfFile" accept="application/pdf">
-      <input type="url" id="pdf_url" placeholder="URL PDF" required readonly>
-      <button type="submit">Guardar</button>
-      <button type="button" id="cancelEdit">Cancelar</button>
-    </form>
-
     <h2>Lista de Certificados</h2>
     <table>
       <thead>
@@ -51,6 +38,20 @@
       </thead>
       <tbody id="adminTableBody"></tbody>
     </table>
+
+    <h2>Agregar / Editar Certificado</h2>
+    <form id="certificateForm">
+      <input type="hidden" id="certId">
+      <input type="text" id="producto" placeholder="Producto" required>
+      <input type="text" id="marca" placeholder="Marca" required>
+      <input type="text" id="modelo" placeholder="Modelo" required>
+      <input type="text" id="certificado" placeholder="Certificado" required>
+      <input type="file" id="pdfFile" accept="application/pdf">
+      <input type="url" id="pdf_url" placeholder="URL PDF" required readonly>
+      <button type="submit">Guardar</button>
+      <button type="button" id="cancelEdit">Cancelar</button>
+    </form>
+        
   </section>
 
   <script type="module" src="js/admin.js"></script>
