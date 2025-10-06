@@ -1,1 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Certifications</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Panel de Administración - Certifications</h1>
+    <button id="logoutBtn">Cerrar sesión</button>
+  </header>
 
+  <main>
+    <section id="authSection">
+      <button id="loginBtn">Ingresar con Google</button>
+    </section>
+
+    <section id="adminSection" class="hidden">
+      <h2>Agregar / Editar Certificado</h2>
+      <form id="certForm">
+        <input type="hidden" id="certId">
+        <input type="text" id="producto" placeholder="Producto" required>
+        <input type="text" id="marca" placeholder="Marca" required>
+        <input type="text" id="modelo" placeholder="Modelo" required>
+        <input type="text" id="certificado" placeholder="Certificado" required>
+        <input type="url" id="pdf_url" placeholder="URL PDF" required>
+        <button type="submit">Guardar</button>
+      </form>
+
+      <h2>Certificados existentes</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>Certificado</th>
+            <th>PDF</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="certTableBody"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>
