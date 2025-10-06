@@ -1,22 +1,32 @@
-// js/main.js
-
-const resultsTableBody = document.getElementById("resultsTableBody");
+const certTableBody = document.getElementById("certTableBody");
 const searchProducto = document.getElementById("searchProducto");
+const searchMarca = document.getElementById("searchMarca");
 const searchModelo = document.getElementById("searchModelo");
+const clearFilters = document.getElementById("clearFilters");
 
-let allCertificates = [];
+let allCertifications = [];
 
-// Cargar certificados desde backend
-async function loadCertificates() {
-  const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/getCertificates");
-  allCertificates = await res.json();
-  renderTable(allCertificates);
+// Obtener todos los certificados desde el backend
+async function loadCertifications() {
+  try {
+    const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/getCertificates");
+    allCertifications = await res.json();
+    renderTable(allCertifications);
+  } catch (err) {
+    console.error("Error cargando certificados:", err);
+    certTableBody.innerHTML = `<tr><td colspan="5">Error cargando certificados.</td></tr>`;
+  }
 }
 
-// Renderizar tabla según datos filtrados
-function renderTable(certificates) {
-  resultsTableBody.innerHTML = "";
-  certificates.forEach(cert => {
+// Renderizar tabla según array
+function renderTable(data) {
+  certTableBody.innerHTML = "";
+  if (!data.length) {
+    certTableBody.innerHTML = `<tr><td colspan="5">No hay registros</td></tr>`;
+    return;
+  }
+
+  data.forEach(cert => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${cert.certificado}</td>
@@ -25,26 +35,38 @@ function renderTable(certificates) {
       <td>${cert.modelo}</td>
       <td><a href="${cert.pdf_url}" target="_blank">Ver PDF</a></td>
     `;
-    resultsTableBody.appendChild(tr);
+    certTableBody.appendChild(tr);
   });
 }
 
-// Filtrar según inputs
-function filterCertificates() {
-  const productoFilter = searchProducto.value.toLowerCase();
-  const modeloFilter = searchModelo.value.toLowerCase();
+// Filtro parcial
+function filterCertifications() {
+  const producto = searchProducto.value.toLowerCase();
+  const marca = searchMarca.value.toLowerCase();
+  const modelo = searchModelo.value.toLowerCase();
 
-  const filtered = allCertificates.filter(cert => {
-    return cert.producto.toLowerCase().includes(productoFilter) &&
-           cert.modelo.toLowerCase().includes(modeloFilter);
+  const filtered = allCertifications.filter(cert => {
+    return (
+      cert.producto.toLowerCase().includes(producto) &&
+      cert.marca.toLowerCase().includes(marca) &&
+      cert.modelo.toLowerCase().includes(modelo)
+    );
   });
 
   renderTable(filtered);
 }
 
-// Listeners de búsqueda
-searchProducto.addEventListener("input", filterCertificates);
-searchModelo.addEventListener("input", filterCertificates);
+// Eventos de búsqueda
+searchProducto.addEventListener("input", filterCertifications);
+searchMarca.addEventListener("input", filterCertifications);
+searchModelo.addEventListener("input", filterCertifications);
 
-// Inicializar
-loadCertificates();
+clearFilters.addEventListener("click", () => {
+  searchProducto.value = "";
+  searchMarca.value = "";
+  searchModelo.value = "";
+  renderTable(allCertifications);
+});
+
+// Cargar datos al inicio
+loadCertifications();
