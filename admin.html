@@ -4,14 +4,6 @@
   <meta charset="UTF-8">
   <title>Panel Admin - Certifications</title>
   <link rel="stylesheet" href="css/styles.css">
-  <style>
-    .hidden { display: none; }
-    table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
-    th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
-    th { background-color: #f2f2f2; }
-    button { margin: 0.2rem; padding: 0.3rem 0.6rem; cursor: pointer; }
-    form input, form button { margin: 0.2rem 0; padding: 0.4rem; }
-  </style>
 </head>
 <body>
   <header>
@@ -27,6 +19,7 @@
   <!-- Sección admin (oculta hasta login) -->
   <section id="adminSection" class="hidden">
     <button id="logoutBtn">Cerrar sesión</button>
+    <button id="newCertBtn">Nuevo certificado</button>
 
     <h2>Agregar / Editar Certificado</h2>
     <form id="certificateForm">
@@ -57,8 +50,8 @@
     </table>
   </section>
 
+  <!-- Supabase UMD -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
   <script src="js/admin.js"></script>
-
 </body>
 </html>
