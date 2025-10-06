@@ -1,9 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <title>Certifications - Test</title>
+  <meta charset="UTF-8">
+  <title>Certifications</title>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <h1>certifications.venex.com.ar</h1>
+  <header>
+    <h1>Certifications</h1>
+  </header>
+
+  <section id="searchSection">
+    <input type="text" id="searchProducto" placeholder="Buscar por Producto">
+    <input type="text" id="searchModelo" placeholder="Buscar por Modelo">
+  </section>
+
+  <section id="resultsSection">
+    <table>
+      <thead>
+        <tr>
+          <th>Certificado</th>
+          <th>Producto</th>
+          <th>Marca</th>
+          <th>Modelo</th>
+          <th>PDF</th>
+        </tr>
+      </thead>
+      <tbody id="resultsTableBody"></tbody>
+    </table>
+  </section>
+
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
