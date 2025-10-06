@@ -2,7 +2,7 @@
 const SUPABASE_URL = "https://guhycosuznmmmupsztqn.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1aHljb3N1em5tbW11cHN6dHFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2MTk4NzAsImV4cCI6MjA3NTE5NTg3MH0.aRqaIr5UkW6V62iv92_VV-SnYv8dCHj7v8KNxTCG-Rc";
 
-const supabaseClient = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const adminSection = document.getElementById("adminSection");
 const authSection = document.getElementById("authSection");
@@ -157,3 +157,4 @@ pdfFileInput.addEventListener("change", async (e) => {
   const { publicUrl } = supabaseClient.storage.from("pdfs").getPublicUrl(fileName);
   pdfUrlInput.value = publicUrl;
 });
+
