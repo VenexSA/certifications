@@ -47,9 +47,15 @@ checkSession();
 // Cargar certificados
 async function renderAdminTable(token) {
   try {
-    const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/getCertificates", {
+    //const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/getCertificates", {
+    const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/admin/getCertificates", {
       headers: { "Authorization": `Bearer ${token}` }
     });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      alert(`Error ${res.status}: ${err.error || 'No autorizado'}`);
+      return;
+    }
     const data = await res.json();
     adminTableBody.innerHTML = "";
     data.forEach(cert => {
@@ -83,7 +89,8 @@ async function renderAdminTable(token) {
 
 // Editar certificado
 async function editCertificate(id, token) {
-  const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/getCertificates", {
+  //const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/getCertificates", {
+  const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/admin/getCertificates", {
     headers: { "Authorization": `Bearer ${token}` }
   });
   const data = await res.json();
@@ -157,4 +164,5 @@ pdfFileInput.addEventListener("change", async (e) => {
   const { publicUrl } = supabaseClient.storage.from("pdfs").getPublicUrl(fileName);
   pdfUrlInput.value = publicUrl;
 });
+
 
