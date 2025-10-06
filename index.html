@@ -2,22 +2,18 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Certifications - Venex</title>
+  <title>Certifications</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <header>
-    <h1>Certificados Venex</h1>
+    <h1>Certificados</h1>
   </header>
 
   <section>
-    <h2>Buscar Certificados</h2>
-    <div class="search-container">
-      <input type="text" id="searchProducto" placeholder="Buscar por Producto">
-      <input type="text" id="searchMarca" placeholder="Buscar por Marca">
-      <input type="text" id="searchModelo" placeholder="Buscar por Modelo">
-      <button id="clearFilters">Limpiar filtros</button>
-    </div>
+    <input type="text" id="filterProducto" placeholder="Buscar por producto">
+    <input type="text" id="filterMarca" placeholder="Buscar por marca">
+    <button id="clearFilters">Limpiar filtros</button>
 
     <table>
       <thead>
@@ -33,8 +29,6 @@
     </table>
   </section>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
   <script type="module" src="js/main.js"></script>
-
 </body>
 </html>
