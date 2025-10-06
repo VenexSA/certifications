@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <title>Panel Admin - Certifications</title>
   <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .hidden { display: none; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+    th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
+    th { background-color: #f2f2f2; }
+    button { margin: 0.2rem; padding: 0.3rem 0.6rem; cursor: pointer; }
+    form input, form button { margin: 0.2rem 0; padding: 0.4rem; }
+  </style>
 </head>
 <body>
   <header>
@@ -33,7 +41,6 @@
       <button type="button" id="cancelEdit">Cancelar</button>
     </form>
 
-
     <h2>Lista de Certificados</h2>
     <table>
       <thead>
@@ -49,7 +56,10 @@
       <tbody id="adminTableBody"></tbody>
     </table>
   </section>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/supabase.min.js"></script>
+
+  <!-- Supabase CDN -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2.58.0/dist/supabase.min.js"></script>
+  <!-- Admin JS -->
   <script type="module" src="js/admin.js"></script>
 </body>
 </html>
