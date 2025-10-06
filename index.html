@@ -2,20 +2,23 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Certifications</title>
+  <title>Certifications - Venex</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <header>
-    <h1>Certifications</h1>
+    <h1>Certificados Venex</h1>
   </header>
 
-  <section id="searchSection">
-    <input type="text" id="searchProducto" placeholder="Buscar por Producto">
-    <input type="text" id="searchModelo" placeholder="Buscar por Modelo">
-  </section>
+  <section>
+    <h2>Buscar Certificados</h2>
+    <div class="search-container">
+      <input type="text" id="searchProducto" placeholder="Buscar por Producto">
+      <input type="text" id="searchMarca" placeholder="Buscar por Marca">
+      <input type="text" id="searchModelo" placeholder="Buscar por Modelo">
+      <button id="clearFilters">Limpiar filtros</button>
+    </div>
 
-  <section id="resultsSection">
     <table>
       <thead>
         <tr>
@@ -26,7 +29,7 @@
           <th>PDF</th>
         </tr>
       </thead>
-      <tbody id="resultsTableBody"></tbody>
+      <tbody id="certTableBody"></tbody>
     </table>
   </section>
 
