@@ -1,9 +1,9 @@
-// js/main.js
-const tableBody = document.getElementById("tableBody");
-const searchProducto = document.getElementById("searchProducto");
-const searchMarca = document.getElementById("searchMarca");
+const certTableBody = document.getElementById("certTableBody");
+const filterProducto = document.getElementById("filterProducto");
+const filterMarca = document.getElementById("filterMarca");
+const clearFilters = document.getElementById("clearFilters");
 
-async function loadCertificates() {
+async function loadCertifications() {
   try {
     const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/getCertificates");
     const data = await res.json();
@@ -14,15 +14,14 @@ async function loadCertificates() {
 }
 
 function renderTable(data) {
-  tableBody.innerHTML = "";
-  const productoFilter = searchProducto.value.toLowerCase();
-  const marcaFilter = searchMarca.value.toLowerCase();
+  const productoFilter = filterProducto.value.toLowerCase();
+  const marcaFilter = filterMarca.value.toLowerCase();
+
+  certTableBody.innerHTML = "";
 
   data
-    .filter(c => 
-      c.producto.toLowerCase().includes(productoFilter) &&
-      c.marca.toLowerCase().includes(marcaFilter)
-    )
+    .filter(cert => cert.producto.toLowerCase().includes(productoFilter) &&
+                    cert.marca.toLowerCase().includes(marcaFilter))
     .forEach(cert => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
@@ -32,13 +31,16 @@ function renderTable(data) {
         <td>${cert.modelo}</td>
         <td><a href="${cert.pdf_url}" target="_blank">Ver PDF</a></td>
       `;
-      tableBody.appendChild(tr);
+      certTableBody.appendChild(tr);
     });
 }
 
-// Eventos de filtros
-searchProducto.addEventListener("input", loadCertificates);
-searchMarca.addEventListener("input", loadCertificates);
+filterProducto.addEventListener("input", loadCertifications);
+filterMarca.addEventListener("input", loadCertifications);
+clearFilters.addEventListener("click", () => {
+  filterProducto.value = "";
+  filterMarca.value = "";
+  loadCertifications();
+});
 
-// Cargar tabla al inicio
-loadCertificates();
+loadCertifications();
