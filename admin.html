@@ -4,22 +4,23 @@
   <meta charset="UTF-8">
   <title>Panel Admin - Certifications</title>
   <link rel="stylesheet" href="css/styles.css">
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
 </head>
 <body>
   <header>
     <h1>Panel de Administración</h1>
   </header>
 
-  <!-- Sección de login -->
+  <!-- Login -->
   <section id="authSection">
-    <p>Para acceder al panel, inicia sesión con Google:</p>
+    <p>Inicia sesión con Google para acceder:</p>
     <button id="loginBtn">Ingresar con Google</button>
   </section>
 
-  <!-- Sección admin (oculta hasta login) -->
+  <!-- Admin -->
   <section id="adminSection" class="hidden">
     <button id="logoutBtn">Cerrar sesión</button>
-    <button id="newCertBtn">Nuevo certificado</button>
 
     <h2>Agregar / Editar Certificado</h2>
     <form id="certificateForm">
@@ -50,9 +51,6 @@
     </table>
   </section>
 
-  <!-- Supabase UMD -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
   <script type="module" src="js/admin.js"></script>
-
 </body>
 </html>
