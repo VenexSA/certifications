@@ -2,48 +2,51 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Admin - Certifications</title>
+  <title>Panel Admin - Certifications</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <header>
-    <h1>Panel de Administración - Certifications</h1>
-    <button id="logoutBtn">Cerrar sesión</button>
+    <h1>Panel de Administración</h1>
   </header>
 
-  <main>
-    <section id="authSection">
-      <button id="loginBtn">Ingresar con Google</button>
-    </section>
+  <!-- Sección de login -->
+  <section id="authSection">
+    <p>Para acceder al panel, inicia sesión con Google:</p>
+    <button id="loginBtn">Ingresar con Google</button>
+  </section>
 
-    <section id="adminSection" class="hidden">
-      <h2>Agregar / Editar Certificado</h2>
-      <form id="certForm">
-        <input type="hidden" id="certId">
-        <input type="text" id="producto" placeholder="Producto" required>
-        <input type="text" id="marca" placeholder="Marca" required>
-        <input type="text" id="modelo" placeholder="Modelo" required>
-        <input type="text" id="certificado" placeholder="Certificado" required>
-        <input type="url" id="pdf_url" placeholder="URL PDF" required>
-        <button type="submit">Guardar</button>
-      </form>
+  <!-- Sección admin (oculta hasta login) -->
+  <section id="adminSection" class="hidden">
+    <button id="logoutBtn">Cerrar sesión</button>
 
-      <h2>Certificados existentes</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Producto</th>
-            <th>Marca</th>
-            <th>Modelo</th>
-            <th>Certificado</th>
-            <th>PDF</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="certTableBody"></tbody>
-      </table>
-    </section>
-  </main>
+    <h2>Agregar / Editar Certificado</h2>
+    <form id="certificateForm">
+      <input type="hidden" id="certId">
+      <input type="text" id="producto" placeholder="Producto" required>
+      <input type="text" id="marca" placeholder="Marca" required>
+      <input type="text" id="modelo" placeholder="Modelo" required>
+      <input type="text" id="certificado" placeholder="Certificado" required>
+      <input type="url" id="pdf_url" placeholder="URL PDF" required>
+      <button type="submit">Guardar</button>
+      <button type="button" id="cancelEdit">Cancelar</button>
+    </form>
+
+    <h2>Lista de Certificados</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Certificado</th>
+          <th>Producto</th>
+          <th>Marca</th>
+          <th>Modelo</th>
+          <th>PDF</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="adminTableBody"></tbody>
+    </table>
+  </section>
 
   <script type="module" src="js/admin.js"></script>
 </body>
