@@ -1,8 +1,8 @@
 // js/admin.js
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-const SUPABASE_URL = "https://TU_SUPABASE_URL";
-const SUPABASE_ANON_KEY = "TU_SUPABASE_ANON_KEY";
+const SUPABASE_URL = "https://guhycosuznmmmupsztqn.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1aHljb3N1em5tbW11cHN6dHFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2MTk4NzAsImV4cCI6MjA3NTE5NTg3MH0.aRqaIr5UkW6V62iv92_VV-SnYv8dCHj7v8KNxTCG-Rc";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const loginBtn = document.getElementById("loginBtn");
@@ -127,3 +127,4 @@ certForm.addEventListener("submit", async e => {
 
 // Comprobar sesión al cargar
 checkSession();
+
