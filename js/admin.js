@@ -176,3 +176,72 @@ async function checkSession() {
 
 checkSession();
 
+const pdfFileInput = document.getElementById("pdfFile");
+const pdfUrlInput = document.getElementById("pdf_url");
+
+// Subir archivo a Supabase Storage
+async function uploadPdf(file) {
+  if (!file) return null;
+  const fileName = `${Date.now()}-${file.name}`;
+  const { data, error } = await supabase.storage
+    .from("pdfs")
+    .upload(fileName, file, { cacheControl: "3600", upsert: true });
+  if (error) {
+    alert("Error subiendo el PDF: " + error.message);
+    return null;
+  }
+  // Obtener URL pública
+  const { publicUrl, error: urlError } = supabase.storage
+    .from("pdfs")
+    .getPublicUrl(fileName);
+  if (urlError) {
+    alert("Error obteniendo URL: " + urlError.message);
+    return null;
+  }
+  return publicUrl;
+}
+
+// Escuchar cambio de archivo
+pdfFileInput.addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const url = await uploadPdf(file);
+  if (url) pdfUrlInput.value = url;
+});
+
+// Modificar submit para usar el pdf_url generado
+certificateForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const token = supabase.auth.session()?.access_token || null;
+  if (!token) return alert("No autorizado");
+
+  const certData = {
+    producto: document.getElementById("producto").value,
+    marca: document.getElementById("marca").value,
+    modelo: document.getElementById("modelo").value,
+    certificado: document.getElementById("certificado").value,
+    pdf_url: pdfUrlInput.value
+  };
+
+  const id = certIdInput.value;
+  const url = id
+    ? `https://certifications-backend-jnnv.onrender.com/api/updateCertificate/${id}`
+    : `https://certifications-backend-jnnv.onrender.com/api/createCertificate`;
+
+  const method = id ? "PUT" : "POST";
+
+  await fetch(url, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify(certData)
+  });
+
+  certificateForm.reset();
+  certIdInput.value = "";
+  renderAdminTable(token);
+});
+
+
