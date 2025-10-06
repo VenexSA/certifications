@@ -27,10 +27,12 @@
       <input type="text" id="marca" placeholder="Marca" required>
       <input type="text" id="modelo" placeholder="Modelo" required>
       <input type="text" id="certificado" placeholder="Certificado" required>
-      <input type="url" id="pdf_url" placeholder="URL PDF" required>
+      <input type="file" id="pdfFile" accept="application/pdf">
+      <input type="url" id="pdf_url" placeholder="URL PDF" required readonly>
       <button type="submit">Guardar</button>
       <button type="button" id="cancelEdit">Cancelar</button>
     </form>
+
 
     <h2>Lista de Certificados</h2>
     <table>
