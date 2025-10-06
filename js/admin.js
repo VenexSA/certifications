@@ -1,15 +1,14 @@
 // js/admin.js
-
-// Inicializar Supabase (UMD desde CDN)
 const SUPABASE_URL = "https://guhycosuznmmmupsztqn.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1aHljb3N1em5tbW11cHN6dHFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2MTk4NzAsImV4cCI6MjA3NTE5NTg3MH0.aRqaIr5UkW6V62iv92_VV-SnYv8dCHj7v8KNxTCG-Rc"; 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1aHljb3N1em5tbW11cHN6dHFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2MTk4NzAsImV4cCI6MjA3NTE5NTg3MH0.aRqaIr5UkW6V62iv92_VV-SnYv8dCHj7v8KNxTCG-Rc";
 
-// Elementos del DOM
+const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 const adminSection = document.getElementById("adminSection");
 const authSection = document.getElementById("authSection");
 const logoutBtn = document.getElementById("logoutBtn");
-const loginBtn = document.getElementById("loginBtn");
+const newCertBtn = document.getElementById("newCertBtn");
+
 const certificateForm = document.getElementById("certificateForm");
 const adminTableBody = document.getElementById("adminTableBody");
 const cancelEditBtn = document.getElementById("cancelEdit");
@@ -17,37 +16,44 @@ const certIdInput = document.getElementById("certId");
 const pdfFileInput = document.getElementById("pdfFile");
 const pdfUrlInput = document.getElementById("pdf_url");
 
-// --- LOGIN GOOGLE ---
-loginBtn.addEventListener("click", async () => {
-  await supabaseClient.auth.signInWithOAuth({
+// -------- Login Google --------
+document.getElementById("loginBtn").addEventListener("click", async () => {
+  await supabase.auth.signInWithOAuth({
     provider: "google",
     options: { redirectTo: "https://certifications.venex.com.ar/admin.html" }
   });
 });
 
-// --- CERRAR SESIÓN ---
+// -------- Logout --------
 logoutBtn.addEventListener("click", async () => {
-  await supabaseClient.auth.signOut();
+  await supabase.auth.signOut();
   window.location.reload();
 });
 
-// --- VERIFICAR SESIÓN ---
+// -------- Nuevo certificado --------
+newCertBtn.addEventListener("click", () => {
+  certIdInput.value = "";
+  certificateForm.reset();
+});
+
+// -------- Verificar sesión --------
 async function checkSession() {
-  const { data } = await supabaseClient.auth.getSession();
-  if (data.session) {
+  const { data } = await supabase.auth.getSession();
+  const session = data.session;
+  if (session) {
     adminSection.classList.remove("hidden");
     authSection.classList.add("hidden");
-    renderAdminTable(data.session.access_token);
+    await renderAdminTable(session.access_token);
   } else {
     adminSection.classList.add("hidden");
     authSection.classList.remove("hidden");
   }
 }
 
-// --- CARGAR CERTIFICADOS ---
+// -------- Cargar tabla --------
 async function renderAdminTable(token) {
   const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/getCertificates", {
-    headers: { "Authorization": `Bearer ${token}` }
+    headers: { Authorization: `Bearer ${token}` }
   });
   const data = await res.json();
   adminTableBody.innerHTML = "";
@@ -70,17 +76,18 @@ async function renderAdminTable(token) {
 
   // Botones editar/eliminar
   adminTableBody.querySelectorAll(".editBtn").forEach(btn => {
-    btn.addEventListener("click", () => editCertificate(btn.dataset.id, token));
+    btn.addEventListener("click", async () => editCertificate(btn.dataset.id, (await supabase.auth.getSession()).data.session.access_token));
   });
+
   adminTableBody.querySelectorAll(".deleteBtn").forEach(btn => {
-    btn.addEventListener("click", () => deleteCertificate(btn.dataset.id, token));
+    btn.addEventListener("click", async () => deleteCertificate(btn.dataset.id, (await supabase.auth.getSession()).data.session.access_token));
   });
 }
 
-// --- EDITAR CERTIFICADO ---
+// -------- Editar --------
 async function editCertificate(id, token) {
-  const res = await fetch(`https://certifications-backend-jnnv.onrender.com/api/getCertificates`, {
-    headers: { "Authorization": `Bearer ${token}` }
+  const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/getCertificates", {
+    headers: { Authorization: `Bearer ${token}` }
   });
   const data = await res.json();
   const cert = data.find(c => c.id === id);
@@ -92,24 +99,22 @@ async function editCertificate(id, token) {
   pdfUrlInput.value = cert.pdf_url;
 }
 
-// --- CANCELAR EDICIÓN ---
+// -------- Cancelar edición --------
 cancelEditBtn.addEventListener("click", () => {
   certIdInput.value = "";
   certificateForm.reset();
 });
 
-// --- SUBIR PDF ---
+// -------- Subida PDF --------
 async function uploadPdf(file) {
   if (!file) return null;
   const fileName = `${Date.now()}-${file.name}`;
-  const { data, error } = await supabaseClient.storage
-    .from("pdfs")
-    .upload(fileName, file, { cacheControl: "3600", upsert: true });
-  if (error) { alert("Error subiendo PDF: " + error.message); return null; }
-  
-  const { publicUrl, error: urlError } = supabaseClient.storage.from("pdfs").getPublicUrl(fileName);
-  if (urlError) { alert("Error obteniendo URL: " + urlError.message); return null; }
-  
+  const { data, error } = await supabase.storage.from("pdfs").upload(fileName, file, { cacheControl: "3600", upsert: true });
+  if (error) {
+    alert("Error subiendo PDF: " + error.message);
+    return null;
+  }
+  const { publicUrl } = supabase.storage.from("pdfs").getPublicUrl(fileName);
   return publicUrl;
 }
 
@@ -120,10 +125,11 @@ pdfFileInput.addEventListener("change", async (e) => {
   if (url) pdfUrlInput.value = url;
 });
 
-// --- GUARDAR (CREAR / ACTUALIZAR) ---
+// -------- Crear/Actualizar --------
 certificateForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const token = supabaseClient.auth.session()?.access_token || null;
+  const { data } = await supabase.auth.getSession();
+  const token = data.session?.access_token;
   if (!token) return alert("No autorizado");
 
   const certData = {
@@ -138,31 +144,29 @@ certificateForm.addEventListener("submit", async (e) => {
   const url = id
     ? `https://certifications-backend-jnnv.onrender.com/api/updateCertificate/${id}`
     : `https://certifications-backend-jnnv.onrender.com/api/createCertificate`;
+
   const method = id ? "PUT" : "POST";
 
   await fetch(url, {
     method,
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
-    },
+    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
     body: JSON.stringify(certData)
   });
 
   certificateForm.reset();
   certIdInput.value = "";
-  renderAdminTable(token);
+  await renderAdminTable(token);
 });
 
-// --- ELIMINAR CERTIFICADO ---
+// -------- Eliminar --------
 async function deleteCertificate(id, token) {
   if (!confirm("¿Estás seguro de eliminar este certificado?")) return;
   await fetch(`https://certifications-backend-jnnv.onrender.com/api/deleteCertificate/${id}`, {
     method: "DELETE",
-    headers: { "Authorization": `Bearer ${token}` }
+    headers: { Authorization: `Bearer ${token}` }
   });
-  renderAdminTable(token);
+  await renderAdminTable(token);
 }
 
-// --- INICIALIZAR ---
+// -------- Inicializar --------
 checkSession();
