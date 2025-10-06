@@ -52,9 +52,10 @@ async function renderAdminTable(token) {
       headers: { "Authorization": `Bearer ${token}` }
     });
     if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      alert(`Error ${res.status}: ${err.error || 'No autorizado'}`);
-      return;
+      // const err = await res.json().catch(() => ({}));
+      // alert(`Error ${res.status}: ${err.error || 'No autorizado'}`);
+      // return;
+      return res.redirect('/unauthorized.html');
     }
     const data = await res.json();
     adminTableBody.innerHTML = "";
