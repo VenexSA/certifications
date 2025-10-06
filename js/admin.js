@@ -51,12 +51,17 @@ async function renderAdminTable(token) {
     const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/admin/getCertificates", {
       headers: { "Authorization": `Bearer ${token}` }
     });
-    if (!res.ok) {
-      // const err = await res.json().catch(() => ({}));
-      // alert(`Error ${res.status}: ${err.error || 'No autorizado'}`);
-      // return;
-      return res.redirect('/unauthorized.html');
+    // if (!res.ok) {
+    //   // const err = await res.json().catch(() => ({}));
+    //   // alert(`Error ${res.status}: ${err.error || 'No autorizado'}`);
+    //   // return;
+    //   return res.redirect('/unauthorized.html');
+    // }
+    if (res.status === 403 || res.status === 401) {
+      window.location.href = "/unauthorized.html";
+      return;
     }
+
     const data = await res.json();
     adminTableBody.innerHTML = "";
     data.forEach(cert => {
