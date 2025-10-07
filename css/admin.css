@@ -22,7 +22,7 @@
 }
 
 /* Login */
-#loginBtn {
+/* #loginBtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -38,7 +38,44 @@
 
 #loginBtn:hover {
   background-color: #f7f7f7;
+} */
+ 
+/* Login Section */
+#authSection {
+  text-align: center;
 }
+
+#loginBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: #fff;
+  color: #555;
+  border: 1px solid #ccc;
+  padding: 10px 25px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+#loginBtn img {
+  width: 20px;
+  height: 20px;
+}
+
+#loginBtn:hover {
+  background-color: #f7f7f7;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+#loginBtn:active {
+  background-color: #eee;
+  transform: scale(0.98);
+}
+
 
 /* Formulario de certificados */
 form {
