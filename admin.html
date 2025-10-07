@@ -9,9 +9,7 @@
 
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
-  <style>
-    .hidden { display: none !important; }
-  </style>
+  <style>.hidden{display:none!important}</style>
 </head>
 <body>
   <header>
@@ -27,7 +25,7 @@
     <button id="loginBtn">Ingresar con Google</button>
   </section>
 
-  <!-- Admin (arranca oculto SIEMPRE) -->
+  <!-- Admin (arranca oculto) -->
   <section id="adminSection" class="hidden">
     <button id="logoutBtn">Cerrar sesión</button>
 
@@ -53,8 +51,10 @@
       <input type="text" id="marca" placeholder="Marca" required>
       <input type="text" id="modelo" placeholder="Modelo" required>
       <input type="text" id="certificado" placeholder="Certificado" required>
+
       <input type="file" id="pdfFile" accept="application/pdf">
       <input type="url" id="pdf_url" placeholder="URL PDF" required readonly>
+
       <button type="submit">Guardar</button>
       <button type="button" id="cancelEdit">Cancelar</button>
     </form>

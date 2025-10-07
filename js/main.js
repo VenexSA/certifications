@@ -20,16 +20,24 @@ function renderTable(data) {
   certTableBody.innerHTML = "";
 
   data
-    .filter(cert => cert.producto.toLowerCase().includes(productoFilter) &&
-                    cert.marca.toLowerCase().includes(marcaFilter))
-    .forEach(cert => {
+    .filter(
+      (cert) =>
+        cert.producto.toLowerCase().includes(productoFilter) &&
+        cert.marca.toLowerCase().includes(marcaFilter)
+    )
+    .forEach((cert) => {
+      const hasPdf = !!(cert.pdf_url && cert.pdf_url.trim().length);
+      const pdfCell = hasPdf
+        ? `<a href="${cert.pdf_url}" target="_blank" rel="noopener">Ver PDF</a>`
+        : `<span class="badge">Sin certificado</span>`;
+
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${cert.certificado}</td>
         <td>${cert.producto}</td>
         <td>${cert.marca}</td>
         <td>${cert.modelo}</td>
-        <td><a href="${cert.pdf_url}" target="_blank">Ver PDF</a></td>
+        <td>${pdfCell}</td>
       `;
       certTableBody.appendChild(tr);
     });

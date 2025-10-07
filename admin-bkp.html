@@ -1,18 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Panel Admin - Certifications</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <meta http-equiv="Cache-Control" content="no-store" />
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="stylesheet" href="css/styles.css" />
 
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+  <style>
+    .hidden { display: none !important; }
+  </style>
 </head>
 <body>
   <header>
     <h1>Panel de Administración</h1>
   </header>
+
+  <!-- Estado / mensajes -->
+  <section id="status" class="hidden"></section>
 
   <!-- Login -->
   <section id="authSection">
@@ -20,7 +27,7 @@
     <button id="loginBtn">Ingresar con Google</button>
   </section>
 
-  <!-- Admin -->
+  <!-- Admin (arranca oculto SIEMPRE) -->
   <section id="adminSection" class="hidden">
     <button id="logoutBtn">Cerrar sesión</button>
 
@@ -51,7 +58,6 @@
       <button type="submit">Guardar</button>
       <button type="button" id="cancelEdit">Cancelar</button>
     </form>
-        
   </section>
 
   <script type="module" src="js/admin.js"></script>

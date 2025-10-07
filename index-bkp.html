@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Certifications</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Certificados</h1>
+  </header>
+
+  <section>
+    <input type="text" id="filterProducto" placeholder="Buscar por producto">
+    <input type="text" id="filterMarca" placeholder="Buscar por marca">
+    <button id="clearFilters">Limpiar filtros</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Certificado</th>
+          <th>Producto</th>
+          <th>Marca</th>
+          <th>Modelo</th>
+          <th>PDF</th>
+        </tr>
+      </thead>
+      <tbody id="certTableBody"></tbody>
+    </table>
+  </section>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
