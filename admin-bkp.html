@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Herramienta de administración de certificados</title>
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+  <style>.hidden{display:none!important}</style>
+</head>
+
+<body>
+  <!-- Logo -->
+  <header>
+    <div class="logo-container">
+      <img src="https://www.venex.com.ar/fil/logo/header_logo_nuevo.png" alt="Venex Logo">
+    </div>
+  </header>
+
+  <!-- Estado / mensajes -->
+  <section id="status" class="hidden"></section>
+
+  <!-- Login -->
+  <section id="authSection">
+    <button id="loginBtn">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
+      <span>Ingresar con Google</span>
+    </button>
+  </section>
+
+
+  <!-- Admin (arranca oculto) -->
+  <section id="adminSection" class="hidden">
+    <button id="logoutBtn">Cerrar sesión</button>
+
+    <h2>Lista de Certificados</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Certificado</th>
+          <th>Producto</th>
+          <th>Marca</th>
+          <th>Modelo</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="adminTableBody"></tbody>
+    </table>
+
+    <h2>Agregar / Editar Certificado</h2>
+    <form id="certificateForm">
+      <input type="hidden" id="certId">
+      <input type="text" id="producto" placeholder="Producto" required>
+      <input type="text" id="marca" placeholder="Marca" required>
+      <input type="text" id="modelo" placeholder="Modelo" required>
+      <input type="text" id="certificado" placeholder="Certificado" required>
+
+      <input type="file" id="pdfFile" accept="application/pdf">
+      <input type="url" id="pdf_url" placeholder="URL PDF" required readonly>
+
+      <button type="submit">Guardar</button>
+      <button type="button" id="cancelEdit">Cancelar</button>
+    </form>
+  </section>
+
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>

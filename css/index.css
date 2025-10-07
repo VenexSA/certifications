@@ -1,0 +1,31 @@
+/* Filtros */
+.filter-section .filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.filter-section input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  flex: 1;
+}
+
+.filter-section button {
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+}
+
+.filter-section button:hover {
+  background-color: #2980b9;
+}
+
+@media (max-width: 768px) {
+  .filter-section .filters {
+    flex-direction: column;
+  }
+}

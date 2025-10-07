@@ -41,30 +41,10 @@ section {
 }
 
 /* Login Section */
-/* #authSection {
-  text-align: center;
-}
-
-#authSection button {
-  background-color: #4285f4;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-#authSection button:hover {
-  background-color: #357ae8;
-} */
-
-/* Login Section */
 #authSection {
   text-align: center;
 }
 
-/* Botón Google estilizado */
 #loginBtn {
   display: inline-flex;
   align-items: center;
@@ -95,8 +75,6 @@ section {
   background-color: #eee;
   transform: scale(0.98);
 }
-
-
 
 /* Formulario */
 form {
