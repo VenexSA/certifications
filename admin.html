@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Panel Admin - Certifications</title>
+  <title>Herramienta de administración de certificados</title>
   <meta http-equiv="Cache-Control" content="no-store" />
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="stylesheet" href="css/styles.css" />
@@ -12,8 +12,12 @@
   <style>.hidden{display:none!important}</style>
 </head>
 <body>
+
+  <!-- Logo -->
   <header>
-    <h1>Panel de Administración</h1>
+    <div class="logo-container">
+      <img src="https://www.venex.com.ar/fil/logo/header_logo_nuevo.png" alt="Venex Logo">
+    </div>
   </header>
 
   <!-- Estado / mensajes -->
@@ -21,9 +25,12 @@
 
   <!-- Login -->
   <section id="authSection">
-    <p>Inicia sesión con Google para acceder:</p>
-    <button id="loginBtn">Ingresar con Google</button>
+    <button id="loginBtn">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
+      <span>Ingresar con Google</span>
+    </button>
   </section>
+
 
   <!-- Admin (arranca oculto) -->
   <section id="adminSection" class="hidden">

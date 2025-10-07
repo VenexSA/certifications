@@ -18,10 +18,18 @@ header {
   margin-bottom: 30px;
 }
 
-header h1 {
-  color: #2c3e50;
-  font-size: 2rem;
+header .logo-container {
+  background-color: #000; 
+  display: inline-block;
+  padding: 15px 30px;
+  border-radius: 10px;
 }
+
+header .logo-container img {
+  height: 60px;
+  width: auto;
+}
+
 
 /* Secciones */
 section {
@@ -33,7 +41,7 @@ section {
 }
 
 /* Login Section */
-#authSection {
+/* #authSection {
   text-align: center;
 }
 
@@ -49,7 +57,46 @@ section {
 
 #authSection button:hover {
   background-color: #357ae8;
+} */
+
+/* Login Section */
+#authSection {
+  text-align: center;
 }
+
+/* Botón Google estilizado */
+#loginBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: #fff;
+  color: #555;
+  border: 1px solid #ccc;
+  padding: 10px 25px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+#loginBtn img {
+  width: 20px;
+  height: 20px;
+}
+
+#loginBtn:hover {
+  background-color: #f7f7f7;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+#loginBtn:active {
+  background-color: #eee;
+  transform: scale(0.98);
+}
+
+
 
 /* Formulario */
 form {

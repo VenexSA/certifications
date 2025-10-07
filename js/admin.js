@@ -29,7 +29,7 @@ function showAdmin() {
   adminSection.classList.remove("hidden");
 }
 
-// Login con Google (siempre mostrar selector de cuenta)
+// Login con Google 
 loginBtn.addEventListener("click", async () => {
   await supabaseClient.auth.signInWithOAuth({
     provider: "google",
@@ -40,10 +40,10 @@ loginBtn.addEventListener("click", async () => {
   });
 });
 
-// Cerrar sesión / cambiar de cuenta
+// Cerrar sesión 
 logoutBtn.addEventListener("click", async () => {
   await supabaseClient.auth.signOut();
-  showLogin("Sesión cerrada. Podés ingresar con otra cuenta.");
+  showLogin("Sesión cerrada. Por favor, ingresa nuevamente.");
 });
 
 // Verificación: sesión + autorización backend
@@ -68,7 +68,7 @@ async function checkAuth() {
     }
 
     await supabaseClient.auth.signOut();
-    showLogin("Tu usuario no está autorizado. Ingresá con otra cuenta.");
+    showLogin("Tu usuario no está autorizado para el uso de este recurso. Por favor contacta a un administrador.");
   } catch (e) {
     console.error(e);
     showLogin("No se pudo verificar la autorización. Intentalo de nuevo.");
@@ -149,7 +149,7 @@ certificateForm.addEventListener("submit", async (e) => {
   const token = data.session?.access_token;
   if (!token) return showLogin("Sesión no válida.");
 
-  // Si querés obligar a tener PDF, descomentá:
+  // Obligo a agregar el certificado
   if (!pdfUrlInput.value || !pdfUrlInput.value.trim()) {
     alert("Debés subir un PDF antes de guardar.");
     return;
@@ -182,7 +182,7 @@ certificateForm.addEventListener("submit", async (e) => {
 
 // Eliminar
 async function deleteCertificate(id, token) {
-  if (!confirm("¿Estás seguro de eliminar este certificado?")) return;
+  if (!confirm("Estás seguro de eliminar este certificado?")) return;
   await fetch(`https://certifications-backend-jnnv.onrender.com/api/deleteCertificate/${id}`, {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
@@ -190,18 +190,18 @@ async function deleteCertificate(id, token) {
   renderAdminTable(token);
 }
 
-// Subida de PDFs (via backend)
+// Subida de PDFs 
 pdfFileInput.addEventListener("change", async (e) => {
   const file = e.target.files[0];
   if (!file) return;
 
   if (file.type !== "application/pdf") {
-    alert("Debes subir un PDF.");
+    alert("Solo se admite la carga de archivos .PDF.");
     e.target.value = "";
     return;
   }
   if (file.size > 3 * 1024 * 1024) {
-    alert("El PDF supera los 3MB.");
+    alert("El .PDF no debe superar los 3MB de peso.");
     e.target.value = "";
     return;
   }
@@ -215,7 +215,7 @@ pdfFileInput.addEventListener("change", async (e) => {
 
   const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/admin/upload", {
     method: "POST",
-    headers: { Authorization: `Bearer ${token}` }, // NO pongas Content-Type
+    headers: { Authorization: `Bearer ${token}` }, 
     body: fd,
   });
 
@@ -228,5 +228,5 @@ pdfFileInput.addEventListener("change", async (e) => {
 
   const { url } = await res.json();
   pdfUrlInput.value = url;
-  alert("PDF subido correctamente.");
+  alert("PDF cargado correctamente.");
 });
