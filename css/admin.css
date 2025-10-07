@@ -33,25 +33,6 @@ header .logo-container img {
   background-color: #d35400;
 }
 
-/* Login */
-/* #loginBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  background-color: #fff;
-  color: #444;
-  border: 1px solid #ccc;
-  padding: 12px 28px;
-  border-radius: 6px;
-  font-size: 1rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-#loginBtn:hover {
-  background-color: #f7f7f7;
-} */
-
 /* Login Section */
 #authSection {
   text-align: center;
