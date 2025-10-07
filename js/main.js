@@ -15,6 +15,9 @@ async function loadCertifications() {
   }
 }
 
+console.log("Datos recibidos:", data[0]);
+
+
 function renderTable(data) {
   const certificadoFilter = filterCertificado.value.toLowerCase();
   const productoFilter = filterProducto.value.toLowerCase();
