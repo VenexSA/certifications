@@ -9,15 +9,11 @@ async function loadCertifications() {
   try {
     const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/getCertificates");
     const data = await res.json();
-    console.log("Datos recibidos:", data[0]);
-
     renderTable(data);
   } catch (err) {
     console.error("Error cargando certificados:", err);
   }
 }
-
-
 
 function renderTable(data) {
   const certificadoFilter = filterCertificado.value.toLowerCase();
