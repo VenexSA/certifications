@@ -1,16 +1,24 @@
-<!-- public/unauthorized.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Acceso denegado</title>
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="css/styles.css" />
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <style>
+    body{display:flex;align-items:center;justify-content:center;height:100vh;background:#f5f5f5;}
+    .card{text-align:center}
+    .btn{padding:.5rem 1rem;background:#2563eb;color:#fff;border-radius:.5rem;text-decoration:none}
+    .btn:hover{background:#1e40af}
+    .title{font-weight:700;color:#dc2626;margin-bottom:1rem;font-size:1.5rem}
+    .msg{color:#374151;margin-bottom:1.5rem}
+  </style>
 </head>
-<body class="flex items-center justify-center h-screen bg-gray-100">
-  <div class="text-center">
-    <h1 class="text-3xl font-bold text-red-600 mb-4">🚫 Usuario no autorizado</h1>
-    <p class="text-gray-700 mb-6">No tenés permiso para acceder a esta página.</p>
-    <a href="/" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Volver al inicio</a>
+<body>
+  <div class="card">
+    <h1 class="title">🚫 Usuario no autorizado</h1>
+    <p class="msg">No tenés permiso para acceder a esta página.</p>
+    <a href="/admin.html" class="btn">Volver al admin</a>
   </div>
 </body>
 </html>
