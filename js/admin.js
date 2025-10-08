@@ -1,5 +1,5 @@
 const SUPABASE_URL = "https://guhycosuznmmmupsztqn.supabase.co";
-const SUPABASE_ANON_KEY = "mi key"; // no uses service role
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1aHljb3N1em5tbW11cHN6dHFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2MTk4NzAsImV4cCI6MjA3NTE5NTg3MH0.aRqaIr5UkW6V62iv92_VV-SnYv8dCHj7v8KNxTCG-Rc"; // no uses service role
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -51,44 +51,32 @@ logoutBtn.addEventListener("click", async () => {
 
 // --- CHECK AUTH ---
 async function checkAuth() {
+  const { data } = await supabaseClient.auth.getSession();
+  const session = data.session;
+
+  if (!session) {
+    showLogin();
+    return;
+  }
+
   try {
-    const { data } = await supabaseClient.auth.getSession();
-    const session = data.session;
-
-    if (!session) {
-      showLogin();
-      return;
-    }
-
-    // Verificar autorización en backend
     const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/admin/check", {
       headers: { Authorization: `Bearer ${session.access_token}` },
     });
 
-    if (!res.ok) {
-      // Usuario no autorizado
-      let errMsg = "Tu usuario no está autorizado para el uso de este recurso. Por favor contacta a un administrador.";
-      try {
-        const errData = await res.json();
-        if (errData?.error) errMsg = errData.error;
-      } catch (e) {
-        console.error("No se pudo leer mensaje de error del backend:", e);
-      }
-      showLogin(errMsg);
-      await supabaseClient.auth.signOut();
+    if (res.ok) {
+      showAdmin();
+      await renderAdminTable(session.access_token);
       return;
     }
 
-    // Usuario autorizado
-    showAdmin();  // Mostrar sección admin
-    await renderAdminTable(session.access_token);
-
+    await supabaseClient.auth.signOut();
+    showLogin("Tu usuario no está autorizado para el uso de este recurso. Por favor contacta a un administrador.");
   } catch (e) {
-    console.error("Error verificando sesión/autoridad:", e);
+    console.error(e);
     showLogin("No se pudo verificar la autorización. Intentalo de nuevo.");
   }
 }
-
 checkAuth();
 
 // --- TOGGLE FORM (+/-) ---
