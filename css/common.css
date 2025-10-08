@@ -84,6 +84,14 @@ button {
   transition: all 0.3s ease;
 }
 
+input[readonly] {
+  background-color: #e9ecef;
+  color: #6c757d;
+  border: 1px solid #ced4da;
+  cursor: not-allowed;
+}
+
+
 @media (max-width: 768px) {
   section {
     padding: 15px;

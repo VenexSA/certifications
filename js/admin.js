@@ -51,34 +51,7 @@ logoutBtn.addEventListener("click", async () => {
   showLogin("Sesión cerrada. Por favor, ingresa nuevamente.");
 });
 
-// --- CHECK AUTH ---
-// async function checkAuth() {
-//   const { data } = await supabaseClient.auth.getSession();
-//   const session = data.session;
 
-//   if (!session) {
-//     showLogin();
-//     return;
-//   }
-
-//   try {
-//     const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/admin/check", {
-//       headers: { Authorization: `Bearer ${session.access_token}` },
-//     });
-
-//     if (res.ok) {
-//       showAdmin();
-//       await renderAdminTable(session.access_token);
-//       return;
-//     }
-
-//     await supabaseClient.auth.signOut();
-//     showLogin("Tu usuario no está autorizado para el uso de este recurso. Por favor contacta a un administrador.");
-//   } catch (e) {
-//     console.error(e);
-//     showLogin("No se pudo verificar la autorización. Intentalo de nuevo.");
-//   }
-// }
 async function checkAuth() {
   const { data } = await supabaseClient.auth.getSession();
   const session = data.session;
