@@ -3,6 +3,7 @@ const SUPABASE_URL = "https://guhycosuznmmmupsztqn.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1aHljb3N1em5tbW11cHN6dHFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2MTk4NzAsImV4cCI6MjA3NTE5NTg3MH0.aRqaIr5UkW6V62iv92_VV-SnYv8dCHj7v8KNxTCG-Rc";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+
 // Para detectar cierre de sesión desde otros tabs
 const PROJECT_REF = "guhycosuznmmmupsztqn";
 const AUTH_STORAGE_KEY = `sb-${PROJECT_REF}-auth-token`;
