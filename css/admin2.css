@@ -1,51 +1,39 @@
-/* --- HEADER --- */
-.admin-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
+/* Header */
+header {
+  text-align: center;
   margin-bottom: 30px;
 }
 
-.admin-header .logo-container {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #353535;
+header .logo-container {
+  background-color: #353535; 
+  display: inline-block;
   padding: 15px 30px;
   border-radius: 10px;
 }
 
-.admin-header .logo-container img {
+header .logo-container img {
   height: 60px;
   width: auto;
 }
 
+/* Botón Cerrar sesión */
 #logoutBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
   background-color: #e67e22;
   color: #fff;
   border: none;
+  /* display: flex; */
+  align-items: center;
+  gap: 8px;
   padding: 10px 16px;
   border-radius: 6px;
   font-weight: 500;
-  margin-left: auto;
-  margin-right: 10px;
-}
-
-#logoutBtn svg {
-  width: 20px;
-  height: 20px;
 }
 
 #logoutBtn:hover {
   background-color: #d35400;
 }
 
-/* --- LOGIN --- */
+/* Login Section */
 #authSection {
   text-align: center;
 }
@@ -81,34 +69,8 @@
   transform: scale(0.98);
 }
 
-/* --- FORM HEADER --- */
-.form-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 40px;
-}
 
-#formTitle.hidden {
-  display: none;
-}
-
-/* --- ICON BUTTON (+/-) --- */
-.icon-btn {
-  background-color: #2ecc71;
-  color: #fff;
-  border: none;
-  padding: 10px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.icon-btn:hover {
-  background-color: #27ae60;
-}
-
-/* --- FORM --- */
+/* Formulario de certificados */
 form {
   display: flex;
   flex-wrap: wrap;
@@ -135,6 +97,7 @@ form button:hover {
   background-color: #27ae60;
 }
 
+/* Acciones dentro del form */
 .form-actions {
   width: 100%;
   display: flex;
@@ -142,17 +105,31 @@ form button:hover {
   gap: 10px;
 }
 
-/* --- BOTONES DE TABLA COMO ICONOS --- */
-table button {
+/* Botón + */
+.icon-btn {
+  background-color: #2ecc71;
+  color: #fff;
   border: none;
-  background: none;
+  padding: 10px;
+  border-radius: 50%;
   cursor: pointer;
 }
 
-table button svg {
-  width: 20px;
-  height: 20px;
-  stroke-width: 2;
+.icon-btn:hover {
+  background-color: #27ae60;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 40px;
+}
+
+/* Botones dentro de tabla */
+table button {
+  border: none;
+  background: none;
 }
 
 .editBtn svg {

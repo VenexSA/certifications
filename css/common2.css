@@ -1,4 +1,13 @@
-/* Google Fonts */
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap'); */
+
+/* Reset y tipografía base */
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+} */
+
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
 
 /* Reset y tipografía base */
@@ -7,9 +16,10 @@
   padding: 0;
   box-sizing: border-box;
   font-family: Nunito, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif,
+    "Helvetica Neue", Arial, sans-serif, 
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
+
 
 body {
   background-color: #f5f7fa;
@@ -18,7 +28,7 @@ body {
   line-height: 1.6;
 }
 
-/* Header general */
+/* Header */
 header {
   display: flex;
   justify-content: center;
