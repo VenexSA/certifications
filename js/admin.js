@@ -51,32 +51,44 @@ logoutBtn.addEventListener("click", async () => {
 
 // --- CHECK AUTH ---
 async function checkAuth() {
-  const { data } = await supabaseClient.auth.getSession();
-  const session = data.session;
-
-  if (!session) {
-    showLogin();
-    return;
-  }
-
   try {
+    const { data } = await supabaseClient.auth.getSession();
+    const session = data.session;
+
+    if (!session) {
+      showLogin();
+      return;
+    }
+
+    // Verificar autorización en backend
     const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/admin/check", {
       headers: { Authorization: `Bearer ${session.access_token}` },
     });
 
-    if (res.ok) {
-      showAdmin();
-      await renderAdminTable(session.access_token);
+    if (!res.ok) {
+      // Usuario no autorizado
+      let errMsg = "Tu usuario no está autorizado para el uso de este recurso. Por favor contacta a un administrador.";
+      try {
+        const errData = await res.json();
+        if (errData?.error) errMsg = errData.error;
+      } catch (e) {
+        console.error("No se pudo leer mensaje de error del backend:", e);
+      }
+      showLogin(errMsg);
+      await supabaseClient.auth.signOut();
       return;
     }
 
-    await supabaseClient.auth.signOut();
-    showLogin("Tu usuario no está autorizado para el uso de este recurso. Por favor contacta a un administrador.");
+    // Usuario autorizado
+    showAdmin();  // Mostrar sección admin
+    await renderAdminTable(session.access_token);
+
   } catch (e) {
-    console.error(e);
+    console.error("Error verificando sesión/autoridad:", e);
     showLogin("No se pudo verificar la autorización. Intentalo de nuevo.");
   }
 }
+
 checkAuth();
 
 // --- TOGGLE FORM (+/-) ---
