@@ -1,5 +1,5 @@
 const SUPABASE_URL = "https://guhycosuznmmmupsztqn.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1aHljb3N1em5tbW11cHN6dHFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2MTk4NzAsImV4cCI6MjA3NTE5NTg3MH0.aRqaIr5UkW6V62iv92_VV-SnYv8dCHj7v8KNxTCG-Rc"; // no uses service role
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1aHljb3N1em5tbW11cHN6dHFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2MTk4NzAsImV4cCI6MjA3NTE5NTg3MH0.aRqaIr5UkW6V62iv92_VV-SnYv8dCHj7v8KNxTCG-Rc"; 
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -24,12 +24,14 @@ function showLogin(msg) {
   else { statusBox.classList.add("hidden"); }
   adminSection.classList.add("hidden");
   authSection.classList.remove("hidden");
+  logoutBtn.style.display = "none";
 }
 
 function showAdmin() {
   statusBox.classList.add("hidden");
   authSection.classList.add("hidden");
   adminSection.classList.remove("hidden");
+  logoutBtn.style.display = "inline-flex";
 }
 
 // --- LOGIN ---
@@ -50,6 +52,33 @@ logoutBtn.addEventListener("click", async () => {
 });
 
 // --- CHECK AUTH ---
+// async function checkAuth() {
+//   const { data } = await supabaseClient.auth.getSession();
+//   const session = data.session;
+
+//   if (!session) {
+//     showLogin();
+//     return;
+//   }
+
+//   try {
+//     const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/admin/check", {
+//       headers: { Authorization: `Bearer ${session.access_token}` },
+//     });
+
+//     if (res.ok) {
+//       showAdmin();
+//       await renderAdminTable(session.access_token);
+//       return;
+//     }
+
+//     await supabaseClient.auth.signOut();
+//     showLogin("Tu usuario no está autorizado para el uso de este recurso. Por favor contacta a un administrador.");
+//   } catch (e) {
+//     console.error(e);
+//     showLogin("No se pudo verificar la autorización. Intentalo de nuevo.");
+//   }
+// }
 async function checkAuth() {
   const { data } = await supabaseClient.auth.getSession();
   const session = data.session;
@@ -70,13 +99,27 @@ async function checkAuth() {
       return;
     }
 
-    await supabaseClient.auth.signOut();
-    showLogin("Tu usuario no está autorizado para el uso de este recurso. Por favor contacta a un administrador.");
+    // 🔹 Si el backend responde 403 o 401, cerrar sesión automáticamente
+    if (res.status === 403) {
+      await supabaseClient.auth.signOut();
+      showLogin("Tu usuario no está autorizado para el uso de este recurso. Por favor contacta a un administrador.");
+      return;
+    }
+
+    if (res.status === 401) {
+      await supabaseClient.auth.signOut();
+      showLogin("Sesión expirada o no válida. Iniciá sesión nuevamente.");
+      return;
+    }
+
+    throw new Error(`Error inesperado (${res.status})`);
+
   } catch (e) {
     console.error(e);
     showLogin("No se pudo verificar la autorización. Intentalo de nuevo.");
   }
 }
+
 checkAuth();
 
 // --- TOGGLE FORM (+/-) ---
