@@ -232,6 +232,7 @@ form#certificateForm input[type="file"] {
   display: block;
 }
 
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
   section { padding: 15px; }

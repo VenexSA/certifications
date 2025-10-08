@@ -380,5 +380,6 @@ clearFiltersBtn.addEventListener("click", () => {
   renderFilteredTable(allCertificates);
 });
 
+
 // Estado inicial coherente si ya hay texto en filtros (por autofill del navegador)
 applyFilters();
