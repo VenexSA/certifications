@@ -1,6 +1,6 @@
-/* Google Fonts (una sola importación en common.css para evitar duplicación) */
+/* Google Fonts (se importa en common.css) */
 
-/* Layout general */
+/* ===== Layout general ===== */
 body {
   background-color: #8c8c8c;
   color: #333;
@@ -8,13 +8,13 @@ body {
   line-height: 1.6;
 }
 
-/* Header */
-header {
+/* ===== Header (logo + botón logout a la derecha) ===== */
+.admin-header {
   display: flex;
-  justify-content: center;
   align-items: center;
-  margin-bottom: 30px;
+  justify-content: space-between; /* botón a la derecha */
   gap: 15px;
+  margin-bottom: 30px;
 }
 
 .logo-container {
@@ -29,7 +29,30 @@ header {
   width: auto;
 }
 
-/* Secciones */
+/* Botón Cerrar sesión */
+#logoutBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #2c3e50;
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1;
+}
+
+#logoutBtn:hover {
+  background-color: #1f2d3a;
+}
+
+#logoutBtn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ===== Secciones ===== */
 section {
   background-color: #fff;
   padding: 25px;
@@ -38,10 +61,10 @@ section {
   margin-bottom: 30px;
 }
 
-/* Ocultos */
+/* ===== Ocultos ===== */
 .hidden { display: none !important; }
 
-/* Tabla */
+/* ===== Tabla ===== */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -53,14 +76,14 @@ thead { background-color: #2c3e50; color: #fff; }
 tbody tr:nth-child(even) { background-color: #f9f9f9; }
 tbody tr:hover { background-color: #eef3f8; }
 
-/* Botones genéricos */
+/* ===== Botones genéricos ===== */
 button {
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: inherit;
 }
 
-/* === FILTROS === */
+/* ===== FILTROS ===== */
 .filters {
   display: flex;
   flex-wrap: wrap;
@@ -94,14 +117,12 @@ button {
   font-size: 15px;
 }
 
-/* === FORM HEADER con botón fijo a la derecha === */
+/* ===== FORM HEADER con botón fijo a la derecha ===== */
 .form-header {
   width: 100%;
   min-height: 48px;
   margin-bottom: 12px;
-
-  /* Cambio clave: Flex en lugar de absolute para evitar "saltos" */
-  display: flex;
+  display: flex;            /* clave para fijar el botón */
   align-items: center;
   gap: 12px;
 }
@@ -136,7 +157,7 @@ button {
 
 .form-header .icon-btn svg { stroke-width: 2; display: block; }
 
-/* === FORM === */
+/* ===== FORM ===== */
 form#certificateForm {
   display: block;
   margin-top: 8px;
@@ -170,7 +191,6 @@ form#certificateForm input[type="file"] {
   margin-top: 8px;
 }
 
-
 .form-actions button {
   padding: 10px 14px;
   border-radius: 8px;
@@ -188,7 +208,31 @@ form#certificateForm input[type="file"] {
   cursor: pointer;
 }
 
-/* Responsive */
+/* ===== LOGIN BTN (Google) ===== */
+#authSection {
+  display: flex;
+  justify-content: center;
+}
+
+#loginBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border: 1px solid #dadce0;
+  background: #fff;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #3c4043;
+}
+
+#loginBtn img {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+/* ===== Responsive ===== */
 @media (max-width: 768px) {
   section { padding: 15px; }
   .form-header .icon-btn { width: 40px; height: 40px; }
