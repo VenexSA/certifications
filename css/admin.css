@@ -81,8 +81,10 @@ tbody tr:hover {
 button {
   cursor: pointer;
   transition: all 0.3s ease;
+  font-family: inherit;
 }
 
+/* Inputs read-only */
 input[readonly] {
   background-color: #e9ecef;
   color: #6c757d;
@@ -110,7 +112,7 @@ input[readonly] {
 
 .filters input:focus {
   border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.12);
   outline: none;
 }
 
@@ -121,23 +123,31 @@ input[readonly] {
   border-radius: 8px;
   padding: 10px 18px;
   font-size: 15px;
-  transition: background-color 0.3s ease;
-}
-
-.filters button:hover {
-  background-color: #1a252f;
 }
 
 /* === BOTÓN AGREGAR CERTIFICADO === */
 .form-header {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-bottom: 15px;
-  position: relative;
+  position: relative;      /* para anclar el botón con absolute */
+  width: 100%;
+  min-height: 48px;
+  display: block;
+  margin-bottom: 12px;
+  padding-right: 56px;     /* espacio para el botón */
 }
 
+.form-header h2 {
+  margin: 6px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* botón + anclado a la derecha (no cambia de icono) */
 .icon-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -148,20 +158,69 @@ input[readonly] {
   height: 44px;
   color: #fff;
   cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.3s ease;
+  transition: transform 0.15s ease, background-color 0.15s ease;
 }
 
 .icon-btn:hover {
   background-color: #0056b3;
-  transform: scale(1.1);
+  transform: translateY(-50%) scale(1.06);
 }
 
 .icon-btn svg {
   stroke-width: 2;
+  display: block;
 }
 
+/* FORM */
+form#certificateForm {
+  display: block;
+  margin-top: 8px;
+  gap: 8px;
+}
+
+form#certificateForm input[type="text"],
+form#certificateForm input[type="url"],
+form#certificateForm input[type="file"] {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+/* form actions */
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.form-actions button {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  background-color: #2c3e50;
+  color: #fff;
+}
+
+/* pequeños estilos para iconos en la tabla cuando usamos botones simples */
+.editBtn, .deleteBtn {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
   section {
     padding: 15px;
+  }
+
+  .icon-btn {
+    width: 40px;
+    height: 40px;
   }
 }
