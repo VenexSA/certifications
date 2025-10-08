@@ -1,8 +1,13 @@
+/* ============== CONFIG SUPABASE ============== */
 const SUPABASE_URL = "https://guhycosuznmmmupsztqn.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1aHljb3N1em5tbW11cHN6dHFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2MTk4NzAsImV4cCI6MjA3NTE5NTg3MH0.aRqaIr5UkW6V62iv92_VV-SnYv8dCHj7v8KNxTCG-Rc";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* ---------------- DOM ---------------- */
+// Para detectar cierre de sesión desde otros tabs
+const PROJECT_REF = "guhycosuznmmmupsztqn";
+const AUTH_STORAGE_KEY = `sb-${PROJECT_REF}-auth-token`;
+
+/* ============== DOM ============== */
 const adminSection    = document.getElementById("adminSection");
 const authSection     = document.getElementById("authSection");
 const statusBox       = document.getElementById("status");
@@ -25,11 +30,11 @@ const filterInputs = {
 };
 const clearFiltersBtn = document.getElementById("clearFilters");
 
-/* ---------------- Estado global ---------------- */
+/* ============== Estado global ============== */
 let allCertificates = [];
 let currentToken = null;
 
-/* ---------------- UI helpers ---------------- */
+/* ============== UI helpers ============== */
 function showLogin(msg) {
   if (msg) { statusBox.textContent = msg; statusBox.classList.remove("hidden"); }
   else { statusBox.classList.add("hidden"); }
@@ -45,8 +50,8 @@ function showAdmin() {
   logoutBtn.style.display = "inline-flex";
 }
 
-/* ---------------- LOGIN / LOGOUT ---------------- */
-loginBtn.addEventListener("click", async () => {
+/* ============== LOGIN / LOGOUT ============== */
+loginBtn?.addEventListener("click", async () => {
   await supabaseClient.auth.signInWithOAuth({
     provider: "google",
     options: {
@@ -56,20 +61,21 @@ loginBtn.addEventListener("click", async () => {
   });
 });
 
-logoutBtn.addEventListener("click", async () => {
+logoutBtn?.addEventListener("click", async () => {
   await supabaseClient.auth.signOut();
   showLogin("Sesión cerrada. Por favor, ingresa nuevamente.");
 });
 
-/* ---------------- AUTH CHECK ---------------- */
+/* ============== AUTH CHECK + Auto sign-out cross-tab ============== */
 async function checkAuth() {
-  const { data } = await supabaseClient.auth.getSession();
-  const session = data.session;
-  if (!session) return showLogin();
+  const { data, error } = await supabaseClient.auth.getSession();
+  const session = data?.session;
+  if (error || !session) return showLogin();
 
   try {
     const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/admin/check", {
       headers: { Authorization: `Bearer ${session.access_token}` },
+      cache: "no-store",
     });
 
     if (res.ok) {
@@ -90,9 +96,30 @@ async function checkAuth() {
     showLogin("No se pudo verificar la autorización.");
   }
 }
+
+// Detecta cambios de sesión (logout/login/refresh) en *este* tab
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  if (event === "SIGNED_OUT" || !session) {
+    showLogin("Sesión finalizada.");
+  } else if (event === "SIGNED_IN") {
+    showAdmin();
+    renderAdminTable(session.access_token);
+  }
+});
+
+// Detecta logout desde *otro* tab/ventana
+window.addEventListener("storage", (ev) => {
+  if (ev.key === AUTH_STORAGE_KEY && ev.newValue === null) {
+    showLogin("Sesión finalizada en otro tab.");
+  }
+});
+
+// Revalida al volver el foco por si expiró el token
+window.addEventListener("focus", checkAuth);
+
 checkAuth();
 
-/* ---------------- TOGGLE FORM (NO CAMBIA ICONO) ---------------- */
+/* ============== TOGGLE FORM (botón fijo a la derecha) ============== */
 toggleBtn.addEventListener("click", () => {
   certificateForm.classList.toggle("hidden");
   const visible = !certificateForm.classList.contains("hidden");
@@ -104,7 +131,7 @@ toggleBtn.addEventListener("click", () => {
   }
 });
 
-/* ---------------- RENDER / CARGA DATOS ---------------- */
+/* ============== RENDER / CARGA DATOS ============== */
 async function renderAdminTable(token) {
   if (!token) {
     const { data } = await supabaseClient.auth.getSession();
@@ -114,6 +141,7 @@ async function renderAdminTable(token) {
 
   const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/admin/getCertificates", {
     headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
   });
 
   if (!res.ok) {
@@ -125,6 +153,7 @@ async function renderAdminTable(token) {
   allCertificates = await res.json();
   currentToken = token;
   renderFilteredTable(allCertificates);
+  applyFilters(); // asegura estado coherente con lo tipeado en filtros
 }
 
 /* Usa datos en memoria para renderizar la tabla */
@@ -155,7 +184,7 @@ function renderFilteredTable(data) {
     adminTableBody.appendChild(tr);
   });
 
-  // listeners
+  // listeners por fila
   adminTableBody.querySelectorAll(".editBtn").forEach(btn =>
     btn.addEventListener("click", () => editCertificate(btn.dataset.id))
   );
@@ -164,12 +193,12 @@ function renderFilteredTable(data) {
   );
 }
 
-/* ---------------- UTIL ---------------- */
+/* ============== UTIL ============== */
 function escapeHtml(str) {
   return str.replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
 }
 
-/* ---------------- EDIT ---------------- */
+/* ============== EDIT ============== */
 function editCertificate(id) {
   const cert = allCertificates.find(c => String(c.id) === String(id));
   if (!cert) { alert("No se encontró el certificado."); return; }
@@ -185,11 +214,10 @@ function editCertificate(id) {
   formTitle.textContent = "Editar un certificado";
   formTitle.classList.remove("hidden");
 
-  // hacer scroll al formulario si hace falta
   certificateForm.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
-/* ---------------- CANCEL ---------------- */
+/* ============== CANCEL ============== */
 cancelEditBtn.addEventListener("click", () => {
   certIdInput.value = "";
   certificateForm.reset();
@@ -197,7 +225,7 @@ cancelEditBtn.addEventListener("click", () => {
   formTitle.classList.add("hidden");
 });
 
-/* ---------------- SAVE / CREATE / UPDATE ---------------- */
+/* ============== SAVE / CREATE / UPDATE ============== */
 certificateForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -231,6 +259,7 @@ certificateForm.addEventListener("submit", async (e) => {
       method,
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${currentToken}` },
       body: JSON.stringify(certData),
+      cache: "no-store",
     });
     if (!res.ok) {
       const err = await res.json().catch(()=>({}));
@@ -246,10 +275,12 @@ certificateForm.addEventListener("submit", async (e) => {
   certIdInput.value = "";
   certificateForm.classList.add("hidden");
   formTitle.classList.add("hidden");
+
+  // Fuerza relectura desde backend y re-render
   await renderAdminTable(currentToken);
 });
 
-/* ---------------- DELETE ---------------- */
+/* ============== DELETE ============== */
 async function deleteCertificate(id) {
   if (!confirm("Estás seguro de eliminar este certificado?")) return;
   if (!currentToken) {
@@ -259,10 +290,12 @@ async function deleteCertificate(id) {
   }
 
   try {
-    await fetch(`https://certifications-backend-jnnv.onrender.com/api/deleteCertificate/${id}`, {
+    const res = await fetch(`https://certifications-backend-jnnv.onrender.com/api/deleteCertificate/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${currentToken}` },
+      cache: "no-store",
     });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     await renderAdminTable(currentToken);
   } catch (e) {
     console.error(e);
@@ -270,7 +303,7 @@ async function deleteCertificate(id) {
   }
 }
 
-/* ---------------- UPLOAD PDF ---------------- */
+/* ============== UPLOAD PDF ============== */
 pdfFileInput.addEventListener("change", async (e) => {
   const file = e.target.files[0];
   if (!file) return;
@@ -300,6 +333,7 @@ pdfFileInput.addEventListener("change", async (e) => {
       method: "POST",
       headers: { Authorization: `Bearer ${currentToken}` },
       body: fd,
+      cache: "no-store",
     });
 
     if (!res.ok) {
@@ -319,19 +353,22 @@ pdfFileInput.addEventListener("change", async (e) => {
   }
 });
 
-/* ---------------- FILTROS ---------------- */
+/* ============== FILTROS ============== */
 function applyFilters() {
-  const certValue = String(filterInputs.certificado.value || "").toLowerCase().trim();
-  const prodValue = String(filterInputs.producto.value || "").toLowerCase().trim();
-  const marcaValue = String(filterInputs.marca.value || "").toLowerCase().trim();
-  const modeloValue = String(filterInputs.modelo.value || "").toLowerCase().trim();
+  const certValue  = (filterInputs.certificado.value || "").toLowerCase().trim();
+  const prodValue  = (filterInputs.producto.value || "").toLowerCase().trim();
+  const marcaValue = (filterInputs.marca.value || "").toLowerCase().trim();
+  const modeloValue= (filterInputs.modelo.value || "").toLowerCase().trim();
 
   const filtered = allCertificates.filter(cert => {
-    const cCert = String(cert.certificado || "").toLowerCase();
-    const cProd = String(cert.producto || "").toLowerCase();
-    const cMarca = String(cert.marca || "").toLowerCase();
-    const cModelo = String(cert.modelo || "").toLowerCase();
-    return cCert.includes(certValue) && cProd.includes(prodValue) && cMarca.includes(marcaValue) && cModelo.includes(modeloValue);
+    const cCert  = String(cert.certificado || "").toLowerCase();
+    const cProd  = String(cert.producto   || "").toLowerCase();
+    const cMarca = String(cert.marca      || "").toLowerCase();
+    const cModelo= String(cert.modelo     || "").toLowerCase();
+    return cCert.includes(certValue)
+        && cProd.includes(prodValue)
+        && cMarca.includes(marcaValue)
+        && cModelo.includes(modeloValue);
   });
 
   renderFilteredTable(filtered);
@@ -342,3 +379,6 @@ clearFiltersBtn.addEventListener("click", () => {
   Object.values(filterInputs).forEach(i => i.value = "");
   renderFilteredTable(allCertificates);
 });
+
+// Estado inicial coherente si ya hay texto en filtros (por autofill del navegador)
+applyFilters();

@@ -62,7 +62,7 @@
       <tbody id="adminTableBody"></tbody>
     </table>
 
-    <!-- ENCABEZADO DEL FORM (BOTÓN + ANCLADO A LA DERECHA) -->
+    <!-- ENCABEZADO + BOTÓN (FIJO A LA DERECHA) -->
     <div class="form-header">
       <h2 id="formTitle" class="hidden"></h2>
       <button id="toggleFormBtn" title="Agregar Certificado" class="icon-btn" aria-label="Agregar certificado">
@@ -75,7 +75,7 @@
     </div>
 
     <!-- FORMULARIO -->
-    <form id="certificateForm" class="hidden">
+    <form id="certificateForm" class="hidden" autocomplete="off">
       <input type="hidden" id="certId">
       <input type="text" id="certificado" placeholder="Certificado" required>
       <input type="text" id="producto" placeholder="Producto" required>

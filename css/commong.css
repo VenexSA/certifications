@@ -1,0 +1,76 @@
+/* Google Fonts - una sola importación global */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
+/* Reset + tipografía base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Nunito, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+/* Base */
+body {
+  background-color: #8c8c8c;
+  color: #333;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+/* Header genérico */
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+.logo-container {
+  background-color: #555;
+  display: inline-block;
+  padding: 15px 30px;
+  border-radius: 10px;
+}
+
+.logo-container img {
+  height: 60px;
+  width: auto;
+}
+
+/* Secciones base */
+section {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+  margin-bottom: 30px;
+}
+
+/* Utilidad */
+.hidden { display: none !important; }
+
+/* Tabla base */
+table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+th, td { padding: 12px 10px; text-align: left; }
+thead { background-color: #2c3e50; color: #fff; }
+tbody tr:nth-child(even) { background-color: #f9f9f9; }
+tbody tr:hover { background-color: #eef3f8; }
+
+/* Botón base */
+button { cursor: pointer; transition: all 0.3s ease; }
+
+/* Readonly genérico (se refuerza en admin.css para #pdf_url) */
+input[readonly] {
+  background-color: #e9ecef;
+  color: #6c757d;
+  border: 1px solid #ced4da;
+  cursor: not-allowed;
+}
+
+/* Responsive base */
+@media (max-width: 768px) {
+  section { padding: 15px; }
+}
