@@ -37,8 +37,6 @@
 
   <!-- ADMIN -->
   <section id="adminSection" class="hidden">
-
-    <!-- FILTROS -->
     <div class="filters">
       <input type="text" id="filterCertificado" placeholder="Buscar por certificado">
       <input type="text" id="filterProducto" placeholder="Buscar por producto">
@@ -46,8 +44,6 @@
       <input type="text" id="filterModelo" placeholder="Buscar por modelo">
       <button id="clearFilters">Limpiar filtros</button>
     </div>    
-
-    <!-- TABLA -->
     <table>
       <thead>
         <tr>
@@ -62,7 +58,18 @@
       <tbody id="adminTableBody"></tbody>
     </table>
 
-    <!-- BOTÓN AGREGAR -->
+    <!-- <div class="form-header">
+      <h2 id="formTitle" class="hidden"></h2>
+      <button id="toggleFormBtn" title="Agregar Certificado" class="icon-btn">
+        <svg id="toggleIcon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+      </button>
+    </div> -->
+
+
     <div class="form-header">
       <button id="toggleFormBtn" title="Agregar Certificado" class="icon-btn">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor"
@@ -74,7 +81,6 @@
       <h2 id="formTitle" class="hidden"></h2>
     </div>
 
-    <!-- FORMULARIO -->
     <form id="certificateForm" class="hidden">
       <input type="hidden" id="certId">
       <input type="text" id="certificado" placeholder="Certificado" required>

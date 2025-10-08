@@ -1,6 +1,5 @@
 const SUPABASE_URL = "https://guhycosuznmmmupsztqn.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1aHljb3N1em5tbW11cHN6dHFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2MTk4NzAsImV4cCI6MjA3NTE5NTg3MH0.aRqaIr5UkW6V62iv92_VV-SnYv8dCHj7v8KNxTCG-Rc"; 
-
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const adminSection    = document.getElementById("adminSection");
@@ -15,8 +14,17 @@ const certIdInput     = document.getElementById("certId");
 const pdfFileInput    = document.getElementById("pdfFile");
 const pdfUrlInput     = document.getElementById("pdf_url");
 const toggleBtn       = document.getElementById("toggleFormBtn");
-const toggleIcon      = document.getElementById("toggleIcon");
 const formTitle       = document.getElementById("formTitle");
+
+// === FILTROS ===
+const filterInputs = {
+  certificado: document.getElementById("filterCertificado"),
+  producto: document.getElementById("filterProducto"),
+  marca: document.getElementById("filterMarca"),
+  modelo: document.getElementById("filterModelo"),
+};
+const clearFiltersBtn = document.getElementById("clearFilters");
+let allCertificates = [];
 
 // --- HELPERS UI ---
 function showLogin(msg) {
@@ -51,15 +59,10 @@ logoutBtn.addEventListener("click", async () => {
   showLogin("Sesión cerrada. Por favor, ingresa nuevamente.");
 });
 
-
 async function checkAuth() {
   const { data } = await supabaseClient.auth.getSession();
   const session = data.session;
-
-  if (!session) {
-    showLogin();
-    return;
-  }
+  if (!session) return showLogin();
 
   try {
     const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/admin/check", {
@@ -72,16 +75,9 @@ async function checkAuth() {
       return;
     }
 
-    // 🔹 Si el backend responde 403 o 401, cerrar sesión automáticamente
-    if (res.status === 403) {
+    if (res.status === 403 || res.status === 401) {
       await supabaseClient.auth.signOut();
-      showLogin("Tu usuario no está autorizado para el uso de este recurso. Por favor contacta a un administrador.");
-      return;
-    }
-
-    if (res.status === 401) {
-      await supabaseClient.auth.signOut();
-      showLogin("Sesión expirada o no válida. Iniciá sesión nuevamente.");
+      showLogin("Usuario no autorizado o sesión expirada.");
       return;
     }
 
@@ -89,24 +85,21 @@ async function checkAuth() {
 
   } catch (e) {
     console.error(e);
-    showLogin("No se pudo verificar la autorización. Intentalo de nuevo.");
+    showLogin("No se pudo verificar la autorización.");
   }
 }
 
 checkAuth();
 
-// --- TOGGLE FORM (+/-) ---
+// --- TOGGLE FORM ---
 toggleBtn.addEventListener("click", () => {
   certificateForm.classList.toggle("hidden");
   const isVisible = !certificateForm.classList.contains("hidden");
-
   if (isVisible) {
     formTitle.textContent = "Crear nuevo certificado";
     formTitle.classList.remove("hidden");
-    toggleIcon.innerHTML = '<line x1="5" y1="12" x2="19" y2="12"/>'; // "-"
   } else {
     formTitle.classList.add("hidden");
-    toggleIcon.innerHTML = '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'; // "+"
   }
 });
 
@@ -115,16 +108,24 @@ async function renderAdminTable(token) {
   const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/admin/getCertificates", {
     headers: { Authorization: `Bearer ${token}` },
   });
-
   if (!res.ok) {
     await supabaseClient.auth.signOut();
-    showLogin("Sesión no autorizada o expirada. Volvé a iniciar sesión.");
+    showLogin("Sesión no autorizada o expirada.");
+    return;
+  }
+  allCertificates = await res.json();
+  renderFilteredTable(allCertificates);
+}
+
+// --- FILTRO LOCAL ---
+function renderFilteredTable(data) {
+  adminTableBody.innerHTML = "";
+  if (!data.length) {
+    adminTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#777;">No se encontraron resultados.</td></tr>`;
     return;
   }
 
-  const data = await res.json();
-  adminTableBody.innerHTML = "";
-  data.forEach((cert) => {
+  data.forEach(cert => {
     const hasPdf = !!(cert.pdf_url && cert.pdf_url.trim().length);
     const pdfCell = hasPdf
       ? `<a href="${cert.pdf_url}" target="_blank" rel="noopener">Ver PDF</a>`
@@ -138,145 +139,39 @@ async function renderAdminTable(token) {
       <td>${cert.modelo}</td>
       <td>${pdfCell}</td>
       <td>
-        <button class="editBtn" title="Editar certificado" data-id="${cert.id}">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
-        </button>
-        <button class="deleteBtn" title="Eliminar certificado" data-id="${cert.id}">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor"><polyline points="3 6 5 6 21 6"/><path d="M19 6L18 19a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-        </button>
-      </td>
-    `;
+        <button class="editBtn" title="Editar" data-id="${cert.id}">✏️</button>
+        <button class="deleteBtn" title="Eliminar" data-id="${cert.id}">🗑️</button>
+      </td>`;
     adminTableBody.appendChild(tr);
   });
 
-  adminTableBody.querySelectorAll(".editBtn").forEach((btn) =>
-    btn.addEventListener("click", () => editCertificate(btn.dataset.id, token))
+  adminTableBody.querySelectorAll(".editBtn").forEach(btn =>
+    btn.addEventListener("click", () => editCertificate(btn.dataset.id))
   );
-  adminTableBody.querySelectorAll(".deleteBtn").forEach((btn) =>
-    btn.addEventListener("click", () => deleteCertificate(btn.dataset.id, token))
+  adminTableBody.querySelectorAll(".deleteBtn").forEach(btn =>
+    btn.addEventListener("click", () => deleteCertificate(btn.dataset.id))
   );
 }
 
-// --- EDIT CERTIFICATE ---
-async function editCertificate(id, token) {
-  const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/admin/getCertificates", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  const data = await res.json();
-  const cert = data.find((c) => String(c.id) === String(id));
-  if (!cert) return;
+// === FILTROS ===
+function applyFilters() {
+  const certValue = filterInputs.certificado.value.toLowerCase();
+  const prodValue = filterInputs.producto.value.toLowerCase();
+  const marcaValue = filterInputs.marca.value.toLowerCase();
+  const modeloValue = filterInputs.modelo.value.toLowerCase();
 
-  certIdInput.value = cert.id;
-  document.getElementById("producto").value = cert.producto;
-  document.getElementById("marca").value = cert.marca;
-  document.getElementById("modelo").value = cert.modelo;
-  document.getElementById("certificado").value = cert.certificado;
-  pdfUrlInput.value = cert.pdf_url || "";
+  const filtered = allCertificates.filter(cert => 
+    cert.certificado.toLowerCase().includes(certValue) &&
+    cert.producto.toLowerCase().includes(prodValue) &&
+    cert.marca.toLowerCase().includes(marcaValue) &&
+    cert.modelo.toLowerCase().includes(modeloValue)
+  );
 
-  certificateForm.classList.remove("hidden");
-  formTitle.textContent = "Editar un certificado";
-  formTitle.classList.remove("hidden");
-  toggleIcon.innerHTML = '<line x1="5" y1="12" x2="19" y2="12"/>'; // "-"
+  renderFilteredTable(filtered);
 }
 
-// --- CANCEL EDIT ---
-cancelEditBtn.addEventListener("click", () => {
-  certIdInput.value = "";
-  certificateForm.reset();
-  certificateForm.classList.add("hidden");
-  formTitle.classList.add("hidden");
-  toggleIcon.innerHTML = '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'; // "+"
-});
-
-// --- SAVE/UPDATE ---
-certificateForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const { data } = await supabaseClient.auth.getSession();
-  const token = data.session?.access_token;
-  if (!token) return showLogin("Sesión no válida.");
-
-  if (!pdfUrlInput.value || !pdfUrlInput.value.trim()) {
-    alert("Debés subir un PDF antes de guardar.");
-    return;
-  }
-
-  const certData = {
-    producto: document.getElementById("producto").value,
-    marca: document.getElementById("marca").value,
-    modelo: document.getElementById("modelo").value,
-    certificado: document.getElementById("certificado").value,
-    pdf_url: pdfUrlInput.value || "",
-  };
-
-  const id = certIdInput.value;
-  const url = id
-    ? `https://certifications-backend-jnnv.onrender.com/api/updateCertificate/${id}`
-    : `https://certifications-backend-jnnv.onrender.com/api/createCertificate`;
-  const method = id ? "PUT" : "POST";
-
-  await fetch(url, {
-    method,
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-    body: JSON.stringify(certData),
-  });
-
-  certificateForm.reset();
-  certIdInput.value = "";
-  certificateForm.classList.add("hidden");
-  formTitle.classList.add("hidden");
-  toggleIcon.innerHTML = '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'; // "+"
-  renderAdminTable(token);
-});
-
-// --- DELETE CERTIFICATE ---
-async function deleteCertificate(id, token) {
-  if (!confirm("Estás seguro de eliminar este certificado?")) return;
-  await fetch(`https://certifications-backend-jnnv.onrender.com/api/deleteCertificate/${id}`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  renderAdminTable(token);
-}
-
-// --- UPLOAD PDF ---
-pdfFileInput.addEventListener("change", async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  if (file.type !== "application/pdf") {
-    alert("Solo se admite la carga de archivos .PDF.");
-    e.target.value = "";
-    return;
-  }
-  if (file.size > 3 * 1024 * 1024) {
-    alert("El .PDF no debe superar los 3MB de peso.");
-    e.target.value = "";
-    return;
-  }
-
-  const { data } = await supabaseClient.auth.getSession();
-  const token = data.session?.access_token;
-  if (!token) return showLogin("Sesión no válida.");
-
-  const fd = new FormData();
-  fd.append("file", file);
-
-  const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/admin/upload", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    body: fd,
-  });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    alert("Error subiendo PDF: " + (err.error || res.status));
-    e.target.value = "";
-    return;
-  }
-
-  const { url } = await res.json();
-  pdfUrlInput.value = url;
-  alert("PDF cargado correctamente.");
+Object.values(filterInputs).forEach(input => input.addEventListener("input", applyFilters));
+clearFiltersBtn.addEventListener("click", () => {
+  Object.values(filterInputs).forEach(i => i.value = "");
+  renderFilteredTable(allCertificates);
 });

@@ -1,182 +1,167 @@
-/* --- HEADER --- */
-.admin-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  margin-top: 51px;
-  margin-bottom: 70px;
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
+/* Reset y tipografía base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Nunito, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
 }
 
-.admin-header .logo-container {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+body {
+  background-color: #8c8c8c;
+  color: #333;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+/* Header general */
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+.logo-container {
   background-color: #555;
+  display: inline-block;
   padding: 15px 30px;
   border-radius: 10px;
-  margin-top: 5px;
-  margin-bottom: 5px;
 }
 
-.admin-header .logo-container img {
+.logo-container img {
   height: 60px;
   width: auto;
 }
 
-#logoutBtn {
-  /* display: inline-flex; */
-  display: none;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  background-color: #e67e22;
-  color: #fff;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 6px;
-  font-weight: 500;
-  margin-left: auto;
-  margin-right: 10px;
-}
-
-#logoutBtn svg {
-  width: 20px;
-  height: 20px;
-}
-
-#logoutBtn:hover {
-  background-color: #d35400;
-}
-
-/* --- LOGIN --- */
-#authSection {
-  text-align: center;
-}
-
-#loginBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+/* Secciones */
+section {
   background-color: #fff;
-  color: #555;
-  border: 1px solid #ccc;
-  padding: 10px 25px;
-  border-radius: 5px;
-  font-size: 1rem;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+  margin-bottom: 30px;
+}
+
+/* Ocultos */
+.hidden {
+  display: none !important;
+}
+
+/* Tablas base */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th, td {
+  padding: 12px 10px;
+  text-align: left;
+}
+
+thead {
+  background-color: #2c3e50;
+  color: #fff;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+  background-color: #eef3f8;
+}
+
+/* Botones genéricos */
+button {
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   transition: all 0.3s ease;
 }
 
-#loginBtn img {
-  width: 20px;
-  height: 20px;
+input[readonly] {
+  background-color: #e9ecef;
+  color: #6c757d;
+  border: 1px solid #ced4da;
+  cursor: not-allowed;
 }
 
-#loginBtn:hover {
-  background-color: #f7f7f7;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-}
-
-#loginBtn:active {
-  background-color: #eee;
-  transform: scale(0.98);
-}
-
-/* --- FORM HEADER --- */
-.form-header {
+/* === FILTROS === */
+.filters {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
-  margin-top: 40px;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-#formTitle.hidden {
-  display: none;
+.filters input {
+  flex: 1 1 200px;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.2s ease;
 }
 
-/* --- ICON BUTTON (+/-) --- */
-.icon-btn {
-  background-color: #2ecc71;
+.filters input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+  outline: none;
+}
+
+.filters button {
+  background-color: #2c3e50;
   color: #fff;
   border: none;
-  padding: 10px;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 15px;
+  transition: background-color 0.3s ease;
+}
+
+.filters button:hover {
+  background-color: #1a252f;
+}
+
+/* === BOTÓN AGREGAR CERTIFICADO === */
+.form-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.icon-btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #007bff;
+  border: none;
   border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  color: #fff;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: transform 0.2s ease, background-color 0.3s ease;
 }
 
 .icon-btn:hover {
-  background-color: #27ae60;
+  background-color: #0056b3;
+  transform: scale(1.1);
 }
 
-/* --- FORM --- */
-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-form input, form button {
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  flex: 1 1 45%;
-}
-
-form button {
-  background-color: #2ecc71;
-  color: #fff;
-  border: none;
-  flex: none;
-}
-
-form button:hover {
-  background-color: #27ae60;
-}
-
-.form-actions {
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-/* --- BOTONES DE TABLA COMO ICONOS --- */
-table button {
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-
-table button svg {
-  width: 20px;
-  height: 20px;
+.icon-btn svg {
   stroke-width: 2;
 }
 
-.editBtn svg {
-  stroke: #f39c12;
-}
-
-.deleteBtn svg {
-  stroke: #e74c3c;
-}
-
-.editBtn:hover svg {
-  stroke: #d68910;
-}
-
-.deleteBtn:hover svg {
-  stroke: #c0392b;
-}
-
 @media (max-width: 768px) {
-  form {
-    flex-direction: column;
+  section {
+    padding: 15px;
   }
 }
