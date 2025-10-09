@@ -83,7 +83,7 @@ async function checkAuth() {
     });
 
     if (res.ok) {
-      showAdmin();                              // ✅ Solo acá
+      showAdmin();                             
       await renderAdminTable(session.access_token);
       return;
     }
