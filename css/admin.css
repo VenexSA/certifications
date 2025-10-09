@@ -29,7 +29,7 @@ body {
   width: auto;
 }
 
-#logoutBtn {
+/* #logoutBtn {
   grid-column: 3;         
   justify-self: end;      
   display: inline-flex;
@@ -42,13 +42,42 @@ body {
   border-radius: 8px;
   font-size: 14px;
   line-height: 1;
-  opacity: 0;             /* arranca invisible */
+  opacity: 0;             
   transition: opacity 0.3s ease;
 }
 
 #logoutBtn.visible {
-  opacity: 1;             /* se vuelve visible por JS */
+  opacity: 1;             
+} */
+
+#logoutBtn {
+  grid-column: 3;
+  justify-self: end;
+  display: inline-flex;        /* siempre ocupa espacio */
+  align-items: center;
+  gap: 8px;
+  background-color: #2c3e50;
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1;
+
+  /* arranca invisible pero mantiene el espacio */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0s linear 0.3s;
 }
+
+#logoutBtn.visible {
+  opacity: 1;                  /* visible por JS */
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.3s ease;
+}
+
 
 #logoutBtn:hover {
   background-color: #1f2d3a;
