@@ -67,6 +67,46 @@ logoutBtn?.addEventListener("click", async () => {
 });
 
 /* ============== AUTH CHECK + Auto sign-out cross-tab ============== */
+// async function checkAuth() {
+//   const { data, error } = await supabaseClient.auth.getSession();
+//   const session = data?.session;
+//   if (error || !session) return showLogin();
+
+//   try {
+//     const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/admin/check", {
+//       headers: { Authorization: `Bearer ${session.access_token}` },
+//       cache: "no-store",
+//     });
+
+//     if (res.ok) {
+//       showAdmin();
+//       await renderAdminTable(session.access_token);
+//       return;
+//     }
+
+//     if (res.status === 403 || res.status === 401) {
+//       await supabaseClient.auth.signOut();
+//       showLogin("Tu usuario no se encuentra autorizado para utilizar este recurso. Por favor, contacta con un administrador.");
+//       return;
+//     }
+
+//     throw new Error(`Error inesperado (${res.status})`);
+//   } catch (e) {
+//     console.error(e);
+//     showLogin("No se pudo verificar la autorización.");
+//   }
+// }
+
+// Detecta cambios de sesión (logout/login/refresh) en *este* tab
+// supabaseClient.auth.onAuthStateChange((event, session) => {
+//   if (event === "SIGNED_OUT" || !session) {
+//     showLogin("Sesión finalizada.");
+//   } else if (event === "SIGNED_IN") {
+//     showAdmin();
+//     renderAdminTable(session.access_token);
+//   }
+// });
+
 async function checkAuth() {
   const { data, error } = await supabaseClient.auth.getSession();
   const session = data?.session;
@@ -79,7 +119,7 @@ async function checkAuth() {
     });
 
     if (res.ok) {
-      showAdmin();
+      showAdmin();                              // ✅ Solo acá
       await renderAdminTable(session.access_token);
       return;
     }
@@ -97,15 +137,18 @@ async function checkAuth() {
   }
 }
 
-// Detecta cambios de sesión (logout/login/refresh) en *este* tab
-supabaseClient.auth.onAuthStateChange((event, session) => {
+
+supabaseClient.auth.onAuthStateChange(async (event, session) => {
   if (event === "SIGNED_OUT" || !session) {
     showLogin("Sesión finalizada.");
-  } else if (event === "SIGNED_IN") {
-    showAdmin();
-    renderAdminTable(session.access_token);
+    return;
+  }
+  if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+    // ✅ Validá SIEMPRE contra tu backend antes de mostrar admin
+    await checkAuth(); // checkAuth ya se encarga de showAdmin() si está ok
   }
 });
+
 
 // Detecta logout desde *otro* tab/ventana
 window.addEventListener("storage", (ev) => {
@@ -145,7 +188,7 @@ async function renderAdminTable(token) {
 
   if (!res.ok) {
     await supabaseClient.auth.signOut();
-    showLogin("Sesión no autorizada o expirada.");
+    showLogin("Tu usuario no se encuentra autorizado para utilizar este recurso. Por favor, contacta con un administrador.");
     return;
   }
 
