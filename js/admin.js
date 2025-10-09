@@ -86,7 +86,7 @@ async function checkAuth() {
 
     if (res.status === 403 || res.status === 401) {
       await supabaseClient.auth.signOut();
-      showLogin("Usuario no autorizado o sesión expirada.");
+      showLogin("Tu usuario no se encuentra autorizado para utilizar este recurso. Por favor, contacta con un administrador.");
       return;
     }
 
@@ -114,7 +114,6 @@ window.addEventListener("storage", (ev) => {
   }
 });
 
-// Revalida al volver el foco por si expiró el token
 window.addEventListener("focus", checkAuth);
 
 checkAuth();
@@ -153,7 +152,7 @@ async function renderAdminTable(token) {
   allCertificates = await res.json();
   currentToken = token;
   renderFilteredTable(allCertificates);
-  applyFilters(); // asegura estado coherente con lo tipeado en filtros
+  applyFilters(); 
 }
 
 /* Usa datos en memoria para renderizar la tabla */
@@ -380,6 +379,4 @@ clearFiltersBtn.addEventListener("click", () => {
   renderFilteredTable(allCertificates);
 });
 
-
-// Estado inicial coherente si ya hay texto en filtros (por autofill del navegador)
 applyFilters();

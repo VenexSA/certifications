@@ -9,15 +9,15 @@ body {
 /* ===== Header (logo centrado + botón logout a la derecha) ===== */
 .admin-header {
   display: grid;
-  grid-template-columns: 1fr auto 1fr; /* izquierda - centro - derecha */
+  grid-template-columns: 1fr auto 1fr; 
   align-items: center;
   margin-bottom: 30px;
   gap: 15px;
 }
 
 .logo-container {
-  grid-column: 2;         /* columna del medio */
-  justify-self: center;   /* centra horizontalmente */
+  grid-column: 2;         
+  justify-self: center;   
   background-color: #555;
   display: inline-block;
   padding: 15px 30px;
@@ -30,8 +30,8 @@ body {
 }
 
 #logoutBtn {
-  grid-column: 3;         /* columna derecha */
-  justify-self: end;      /* pegado al borde derecho */
+  grid-column: 3;         
+  justify-self: end;      
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -68,7 +68,6 @@ section {
   margin-bottom: 30px;
 }
 
-/* ===== Ocultos ===== */
 .hidden { display: none !important; }
 
 /* ===== Tabla ===== */
@@ -83,7 +82,7 @@ thead { background-color: #2c3e50; color: #fff; }
 tbody tr:nth-child(even) { background-color: #f9f9f9; }
 tbody tr:hover { background-color: #eef3f8; }
 
-/* ===== Botones genéricos ===== */
+/* ===== Botones ===== */
 button {
   cursor: pointer;
   transition: all 0.3s ease;
@@ -228,7 +227,6 @@ form#certificateForm input[type="file"] {
   display: block;
 }
 
-/* ===== Responsive ===== */
 @media (max-width: 768px) {
   section { padding: 15px; }
   .form-header .icon-btn { width: 40px; height: 40px; }

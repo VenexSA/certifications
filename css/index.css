@@ -32,14 +32,14 @@ header {
   background-color: #555;
   padding: 25px 0;
   border-radius: 12px;
-  max-width: 200px;   /* ajusta este valor si querés más o menos ancho */
-  margin: 40px auto;  /* centra horizontalmente el bloque */
+  max-width: 200px;   
+  margin: 40px auto;  
   box-shadow: 0 4px 6px rgba(0,0,0,0.2);
 }
 
 /* Contenedor del logo */
 .logo-container {
-  background-color: #555; /* mismo color para continuidad */
+  background-color: #555; 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -47,11 +47,10 @@ header {
 
 /* Logo */
 .logo-container img {
-  max-width: 120px;  /* tamaño como el de tu ejemplo */
+  max-width: 120px;  
   height: auto;
   display: block;
 }
-
 
 @media (max-width: 768px) {
   .filter-section .filters {
