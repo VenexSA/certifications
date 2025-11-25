@@ -62,3 +62,29 @@ clearFilters.addEventListener("click", () => {
 });
 
 loadCertifications();
+
+
+// --------- Touch real a Supabase (para evitar pausa) ----------
+import { createClient } from "https://esm.sh/@supabase/supabase-js";
+
+const supabase = createClient(
+  "https://guhycosuznmmmupsztqn.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1aHljb3N1em5tbW11cHN6dHFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2MTk4NzAsImV4cCI6MjA3NTE5NTg3MH0.aRqaIr5UkW6V62iv92_VV-SnYv8dCHj7v8KNxTCG-Rc"
+);
+
+async function touchSupabase() {
+  try {
+    // Query mínima real: cuenta como actividad
+    await supabase
+      .from("certifications")
+      .select("id")
+      .limit(1);
+
+    console.log("✔ Supabase touched");
+  } catch (err) {
+    console.warn("No se pudo tocar Supabase:", err);
+  }
+}
+
+// Ejecutarlo al cargar la página
+touchSupabase();
