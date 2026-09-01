@@ -48,3 +48,8 @@ input[readonly] {
 @media (max-width: 768px) {
   section { padding: 15px; }
 }
+.empty-table-message {
+  color: #777;
+  padding: 20px;
+  text-align: center;
+}

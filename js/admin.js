@@ -1,3 +1,10 @@
+import {
+  appendEmptyRow,
+  appendPdfCell,
+  appendTextCell,
+  normalizeCertificatePdfUrl,
+} from "./certificate-view.js";
+
 /* ============== CONFIG SUPABASE ============== */
 const SUPABASE_URL = "https://guhycosuznmmmupsztqn.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1aHljb3N1em5tbW11cHN6dHFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2MTk4NzAsImV4cCI6MjA3NTE5NTg3MH0.aRqaIr5UkW6V62iv92_VV-SnYv8dCHj7v8KNxTCG-Rc";
@@ -36,6 +43,7 @@ let currentToken = null;
 
 /* ============== UI helpers ============== */
 function showLogin(msg) {
+  currentToken = null;
   if (msg) { statusBox.textContent = msg; statusBox.classList.remove("hidden"); }
   else { statusBox.classList.add("hidden"); }
   adminSection.classList.add("hidden");
@@ -163,30 +171,34 @@ async function renderAdminTable(token) {
 
 /* Usa datos en memoria para renderizar la tabla */
 function renderFilteredTable(data) {
-  adminTableBody.innerHTML = "";
+  adminTableBody.replaceChildren();
   if (!Array.isArray(data) || data.length === 0) {
-    adminTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#777;">No se encontraron resultados.</td></tr>`;
+    appendEmptyRow(adminTableBody, 6, "No se encontraron resultados.");
     return;
   }
 
   data.forEach(cert => {
-    const hasPdf = !!(cert.pdf_url && String(cert.pdf_url).trim().length);
-    const pdfCell = hasPdf
-      ? `<a href="${cert.pdf_url}" target="_blank" rel="noopener">Ver PDF</a>`
-      : `<span class="badge">Sin certificado</span>`;
+    const row = document.createElement("tr");
+    appendTextCell(row, cert.certificado);
+    appendTextCell(row, cert.producto);
+    appendTextCell(row, cert.marca);
+    appendTextCell(row, cert.modelo);
+    appendPdfCell(row, cert.pdf_url, "Sin certificado");
 
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${escapeHtml(String(cert.certificado || ''))}</td>
-      <td>${escapeHtml(String(cert.producto || ''))}</td>
-      <td>${escapeHtml(String(cert.marca || ''))}</td>
-      <td>${escapeHtml(String(cert.modelo || ''))}</td>
-      <td>${pdfCell}</td>
-      <td>
-        <button class="editBtn" title="Editar" data-id="${cert.id}">✏️</button>
-        <button class="deleteBtn" title="Eliminar" data-id="${cert.id}">🗑️</button>
-      </td>`;
-    adminTableBody.appendChild(tr);
+    const actions = document.createElement("td");
+    const editButton = document.createElement("button");
+    editButton.className = "editBtn";
+    editButton.title = "Editar";
+    editButton.dataset.id = String(cert.id ?? "");
+    editButton.textContent = "✏️";
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "deleteBtn";
+    deleteButton.title = "Eliminar";
+    deleteButton.dataset.id = String(cert.id ?? "");
+    deleteButton.textContent = "🗑️";
+    actions.append(editButton, deleteButton);
+    row.appendChild(actions);
+    adminTableBody.appendChild(row);
   });
 
   // listeners por fila
@@ -196,11 +208,6 @@ function renderFilteredTable(data) {
   adminTableBody.querySelectorAll(".deleteBtn").forEach(btn =>
     btn.addEventListener("click", () => deleteCertificate(btn.dataset.id))
   );
-}
-
-/* ============== UTIL ============== */
-function escapeHtml(str) {
-  return str.replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
 }
 
 /* ============== EDIT ============== */
@@ -213,7 +220,7 @@ function editCertificate(id) {
   document.getElementById("marca").value = cert.marca || "";
   document.getElementById("modelo").value = cert.modelo || "";
   document.getElementById("certificado").value = cert.certificado || "";
-  pdfUrlInput.value = cert.pdf_url || "";
+  pdfUrlInput.value = normalizeCertificatePdfUrl(cert.pdf_url);
 
   certificateForm.classList.remove("hidden");
   formTitle.textContent = "Editar un certificado";
@@ -349,7 +356,9 @@ pdfFileInput.addEventListener("change", async (e) => {
     }
 
     const { url } = await res.json();
-    pdfUrlInput.value = url;
+    const safeUrl = normalizeCertificatePdfUrl(url);
+    if (!safeUrl) throw new Error("El servidor devolvió una URL de PDF inválida.");
+    pdfUrlInput.value = safeUrl;
     alert("PDF cargado correctamente.");
   } catch (err) {
     console.error("Error upload PDF:", err);

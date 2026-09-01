@@ -1,64 +1,80 @@
+import {
+  appendEmptyRow,
+  appendPdfCell,
+  appendTextCell,
+} from "./certificate-view.js";
+
 const certTableBody = document.getElementById("certTableBody");
 const filterCertificado = document.getElementById("filterCertificado");
 const filterProducto = document.getElementById("filterProducto");
 const filterMarca = document.getElementById("filterMarca");
 const filterModelo = document.getElementById("filterModelo");
 const clearFilters = document.getElementById("clearFilters");
+let allCertificates = [];
 
 async function loadCertifications() {
   try {
-    const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/getCertificates");
+    const res = await fetch("https://certifications-backend-jnnv.onrender.com/api/getCertificates", {
+      cache: "no-store",
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    renderTable(data);
+    if (!Array.isArray(data)) throw new Error("Respuesta inválida");
+    allCertificates = data;
+    renderTable();
   } catch (err) {
     console.error("Error cargando certificados:", err);
+    certTableBody.replaceChildren();
+    appendEmptyRow(certTableBody, 5, "No se pudieron cargar los certificados.");
   }
 }
 
-function renderTable(data) {
+function normalizedField(value) {
+  return String(value ?? "").toLowerCase();
+}
+
+function renderTable() {
   const certificadoFilter = filterCertificado.value.toLowerCase();
   const productoFilter = filterProducto.value.toLowerCase();
   const marcaFilter = filterMarca.value.toLowerCase();
   const modeloFilter = filterModelo.value.toLowerCase();
 
-  certTableBody.innerHTML = "";
+  certTableBody.replaceChildren();
 
-  data
+  const filtered = allCertificates
     .filter(
       (cert) =>
-        cert.producto.toLowerCase().includes(productoFilter) &&
-        cert.marca.toLowerCase().includes(marcaFilter) &&
-        cert.certificado.toLowerCase().includes(certificadoFilter) &&
-        cert.modelo.toLowerCase().includes(modeloFilter)
-    )
-    .forEach((cert) => {
-      const hasPdf = !!(cert.pdf_url && cert.pdf_url.trim().length);
-      const pdfCell = hasPdf
-        ? `<a href="${cert.pdf_url}" target="_blank" rel="noopener">Ver PDF</a>`
-        : `<span class="badge">No cargado</span>`;
+        normalizedField(cert.producto).includes(productoFilter) &&
+        normalizedField(cert.marca).includes(marcaFilter) &&
+        normalizedField(cert.certificado).includes(certificadoFilter) &&
+        normalizedField(cert.modelo).includes(modeloFilter)
+    );
 
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${cert.certificado}</td>
-        <td>${cert.producto}</td>
-        <td>${cert.marca}</td>
-        <td>${cert.modelo}</td>
-        <td>${pdfCell}</td>
-      `;
-      certTableBody.appendChild(tr);
-    });
+  if (!filtered.length) {
+    appendEmptyRow(certTableBody, 5, "No se encontraron resultados.");
+    return;
+  }
+
+  filtered.forEach((cert) => {
+    const row = document.createElement("tr");
+    appendTextCell(row, cert.certificado);
+    appendTextCell(row, cert.producto);
+    appendTextCell(row, cert.marca);
+    appendTextCell(row, cert.modelo);
+    appendPdfCell(row, cert.pdf_url, "No cargado");
+    certTableBody.appendChild(row);
+  });
 }
 
-filterProducto.addEventListener("input", loadCertifications);
-filterMarca.addEventListener("input", loadCertifications);
-filterModelo.addEventListener("input", loadCertifications);
-filterCertificado.addEventListener("input", loadCertifications);
+[filterProducto, filterMarca, filterModelo, filterCertificado].forEach((input) => {
+  input.addEventListener("input", renderTable);
+});
 clearFilters.addEventListener("click", () => {
   filterProducto.value = "";
   filterMarca.value = "";
   filterModelo.value = "";
   filterCertificado.value = "";
-  loadCertifications();
+  renderTable();
 });
 
 loadCertifications();
