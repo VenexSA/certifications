@@ -74,8 +74,15 @@ loginBtn?.addEventListener("click", async () => {
 });
 
 logoutBtn?.addEventListener("click", async () => {
-  await supabaseClient.auth.signOut();
-  showLogin("Sesión cerrada. Por favor, ingresa nuevamente.");
+  const { error } = await supabaseClient.auth.signOut();
+
+  if (error) {
+    statusBox.textContent = "No se pudo cerrar la sesión. Intenta nuevamente.";
+    statusBox.classList.remove("hidden");
+    return;
+  }
+
+  window.location.replace("./");
 });
 
 /* ============== AUTH CHECK + Auto sign-out cross-tab ============== */

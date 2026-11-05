@@ -22,6 +22,14 @@ test("las tablas no vuelven a insertar datos mediante innerHTML", async () => {
   }
 });
 
+test("el cierre de sesión vuelve a la vista pública", async () => {
+  const source = await fs.readFile(new URL("../js/admin.js", import.meta.url), "utf8");
+
+  assert.match(source, /const \{ error \} = await supabaseClient\.auth\.signOut\(\)/);
+  assert.match(source, /if \(error\)/);
+  assert.match(source, /window\.location\.replace\("\.\/"\)/);
+});
+
 test("la CSP conserva las fuentes usadas sin abrir otros origenes", async () => {
   const pages = await Promise.all([
     fs.readFile(new URL("../index.html", import.meta.url), "utf8"),
